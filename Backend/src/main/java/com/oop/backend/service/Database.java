@@ -2,7 +2,6 @@ package com.oop.backend.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.oop.backend.module.Mail;
 import com.oop.backend.module.User;
 
 import java.io.FileWriter;
@@ -11,7 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Database {
+    private static Database instance;
     private List<User> users = new ArrayList<>();
+
+    private Database() {}
+
+    public static Database getInstance() {
+        if (instance == null) {
+            instance = new Database();
+        }
+        return instance;
+    }
 
     public void updateUserData(String path, User user, String state) {
         if (state.equals("new"))

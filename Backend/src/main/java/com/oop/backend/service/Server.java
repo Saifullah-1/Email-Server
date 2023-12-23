@@ -4,15 +4,21 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.oop.backend.module.User;
 import org.json.JSONObject;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+@Service
 public class Server {
     private long ID = 0;
     private Database database;
-    private EmailValidation emailValidation;
+
+    public Server() {
+        this.database = Database.getInstance();
+    }
+//    private EmailValidation emailValidation;
 
 //    public String logIn() {
 //      // check first if the user is found or not
