@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Database {
     private static Database instance;
-    private List<User> users = new ArrayList<>();
+    private List<User> users = new ArrayList<>(); //will be priority queue
 
     private Database() {}
 
@@ -20,6 +20,10 @@ public class Database {
             instance = new Database();
         }
         return instance;
+    }
+
+    public List<User> getUsers() {
+        return users;
     }
 
     public void updateUserData(String path, User user, String state) {
@@ -56,5 +60,7 @@ public class Database {
         }catch (IOException e) {
             e.printStackTrace();
         }
+
+
     }
 }

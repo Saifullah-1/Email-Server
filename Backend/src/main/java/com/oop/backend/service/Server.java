@@ -65,7 +65,7 @@ public class Server {
 
         database.updateUserData(path.concat("/info.json"), user, "new");
 
-        return jsonObject.toString();
+        return new Gson().toJson(database.getUsers());
     }
 
 
