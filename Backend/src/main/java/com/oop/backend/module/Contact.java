@@ -4,7 +4,8 @@ import java.util.List;
 
 public class Contact {
     private long ID;
-    private String name;
+    private String firstName;
+    private String lastName;
     private List<String> email;
 
     public long getID() {
@@ -15,12 +16,20 @@ public class Contact {
         this.ID = ID;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public List<String> getEmail() {

@@ -1,47 +1,52 @@
 package com.oop.backend.module;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.io.IOException;
 
 public class User {
     private long ID;
-    private String name;
-    private List<String> email;
+    private String firstName;
+    private String lastName;
+    private String gender;
+    private Date birthDate;
+    private String email;
     private String password;
     private List<Mail> inbox = new ArrayList<>();
     private List<Mail> sent = new ArrayList<>();
     private List<Mail> draft = new ArrayList<>();
     private List<Mail> trash = new ArrayList<>();
     private List<Contact> contacts = new ArrayList<>();
+    private String path;
 
-    public User(long ID, String name, List<String> email, String password) {
+//    private User() {}
+    public User(long ID, String firstName, String lastName, String gender, Date birthDate, String password, String path) {
         this.ID = ID;
-        this.name = name;
-        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.birthDate = birthDate;
         this.password = password;
+        this.path = path;
     }
 
     public void setID(long ID) {
         this.ID = ID;
     }
 
-    public String getName() {
-        return this.name;
+    public String getPath() {
+        return path;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<String> getEmail() {
-        return this.email;
-    }
-
-    public void setEmail(List<String> email) {
-        this.email = email;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getPassword() {
@@ -100,8 +105,40 @@ public class User {
         this.contacts = contacts;
     }
 
-    public JSONObject toJson() {
-        return (new JSONObject()).put("ID", this.ID).put("name", this.name).put("email", this.email).put("password", this.password);
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public JSONObject convertToJson() {
+        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("gender", this.gender).put("Date of Birth", this.birthDate).put("email", this.email).put("password", this.password);
     }
 
     public void addInbox(Mail newInbox) {

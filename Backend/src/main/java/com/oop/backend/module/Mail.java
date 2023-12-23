@@ -83,7 +83,7 @@ public class Mail {
         this.attachments = attachments;
     }
 
-    public JSONObject toJson() {
+    public JSONObject convertToJson() {
         if (this.state.equalsIgnoreCase("inbox"))
             return new JSONObject().put("ID", this.ID).put("From", this.from).put("Subject", this.subject).put("Body", this.body).put("favourite", this.favourite).put("Type", this.state);
         else // "sent"
