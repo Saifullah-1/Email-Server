@@ -50,7 +50,7 @@ public class Database {
             else if (path.endsWith("trash.json"))
                 fileWriter.write(gson.toJson(user.getTrash()));
             else if (path.endsWith("info.json"))
-                fileWriter.write(gson.toJson(user.convertToJson()));
+                fileWriter.write(gson.toJson(user.convertToJson().toString()));
             fileWriter.flush();
             return;
         }catch (IOException e) {

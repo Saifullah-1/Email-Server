@@ -28,6 +28,7 @@ public class Server {
         // check first if the email is found or not
         JSONObject jsonObject = new JSONObject(newUser);
         String path = "./Users/".concat(jsonObject.getString("email"));
+        System.out.println(path);
         Gson gson = new Gson();
         User user = gson.fromJson(newUser, User.class);
         user.setID(++ID);
@@ -39,23 +40,23 @@ public class Server {
         System.out.println(created1);
 
         File inbox = new File(path.concat("/Inbox")); // inbox folder
-        Boolean created2 = newUserFile.mkdir();
+        Boolean created2 = inbox.mkdir();
         System.out.println(created2);
 
         File sent = new File(path.concat("/Sent")); // sent folder
-        Boolean created3 = newUserFile.mkdir();
+        Boolean created3 = sent.mkdir();
         System.out.println(created3);
 
         File trash = new File(path.concat("/Trash")); // trash folder
-        Boolean created4 = newUserFile.mkdir();
+        Boolean created4 = trash.mkdir();
         System.out.println(created4);
 
         File draft = new File(path.concat("/Draft")); // trash folder
-        Boolean created5 = newUserFile.mkdir();
+        Boolean created5 = draft.mkdir();
         System.out.println(created5);
 
         File contacts = new File(path.concat("/Contacts")); // contacts folder
-        Boolean created6 = newUserFile.mkdir();
+        Boolean created6 = contacts.mkdir();
         System.out.println(created6);
 
         GsonBuilder gsonBuilder = new GsonBuilder();
