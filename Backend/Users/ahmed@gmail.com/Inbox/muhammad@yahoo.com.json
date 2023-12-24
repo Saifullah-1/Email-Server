@@ -1,0 +1,10 @@
+{
+  "ID":0,
+  "from":"muhammad@yahoo.com",
+  "to":"ahmed@gmail.com",
+  "subject":"Tour",
+  "body":"a Tour to Cairo (Cairo Sucks)",
+  "favourite":true,
+  "state":"inbox",
+  "attachments":""
+}
