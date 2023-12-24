@@ -7,26 +7,31 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 @Service
 public class Server {
     private long ID = 0;
     private Database database;
+    private EmailValidator emailValidator;
 
     public Server() {
         this.database = Database.getInstance();
+        this.emailValidator = EmailValidator.getInstance();
     }
-//    private EmailValidation emailValidation;
+
 
 //    public String logIn() {
 //      // check first if the user is found or not
 //    }
 
     public String signUp(String newUser) {
-        // check first if the email is found or not
         JSONObject jsonObject = new JSONObject(newUser);
+        // check first if the email is found or not
+
+        if (!emailValidator.isValidEmail(jsonObject.getString("email")))
+            return "Enter a valid email";
+
+
         String path = "./Users/".concat(jsonObject.getString("email"));
         System.out.println(path);
         Gson gson = new Gson();
