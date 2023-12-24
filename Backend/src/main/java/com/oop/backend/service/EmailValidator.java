@@ -6,16 +6,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class EmailValidator {
-    private static EmailValidator instance;
-
-    private EmailValidator() {}
-
-    public static EmailValidator getInstance() {
-        if (instance == null) {
-            instance = new EmailValidator();
-        }
-        return instance;
-    }
     private static final String EMAIL_REGEX =
             "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 

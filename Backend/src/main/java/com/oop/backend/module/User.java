@@ -128,6 +128,9 @@ public class User {
     }
 
     public void addInbox(Mail newInbox) {
+        if (this.inbox == null) {
+            this.inbox = new ArrayList<>();
+        }
         this.inbox.add(newInbox);
     }
 

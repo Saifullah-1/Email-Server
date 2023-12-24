@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.oop.backend.module.User;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +44,9 @@ public class Database {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
         Gson gson = gsonBuilder.create();
+
         try(FileWriter fileWriter = new FileWriter(path)) {
+
             if (path.endsWith("inbox.json"))
                 fileWriter.write(gson.toJson(user.getInbox()));
             else if (path.endsWith("contacts.json"))
@@ -60,8 +64,6 @@ public class Database {
         }catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public void addUser(User user) {
