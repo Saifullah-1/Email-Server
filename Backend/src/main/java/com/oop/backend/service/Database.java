@@ -63,4 +63,8 @@ public class Database {
 
 
     }
+
+    public void addUser(User user) {
+        this.users.add(user);
+    }
 }

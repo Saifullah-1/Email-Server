@@ -38,7 +38,7 @@ public class Server {
         User user = gson.fromJson(newUser, User.class);
         user.setID(++ID);
         user.setPath(path);
-//        this.database.addUser(user);
+        this.database.addUser(user);
 
         File newUserFile = new File(path); // user folder
         Boolean created1 = newUserFile.mkdir();

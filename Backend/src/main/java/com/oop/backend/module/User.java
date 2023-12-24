@@ -1,21 +1,16 @@
 package com.oop.backend.module;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.io.IOException;
 
 public class User {
     private long ID;
     private String firstName;
     private String lastName;
-    private String gender;
     private Date birthDate;
     private String email;
     private String password;
@@ -27,11 +22,10 @@ public class User {
     private String path;
 
 //    private User() {}
-    public User(long ID, String firstName, String lastName, String gender, Date birthDate, String password, String path) {
+    public User(long ID, String firstName, String lastName, Date birthDate, String password, String path) {
         this.ID = ID;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.gender = gender;
         this.birthDate = birthDate;
         this.password = password;
         this.path = path;
@@ -121,14 +115,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     public Date getBirthDate() {
         return birthDate;
     }
@@ -138,7 +124,7 @@ public class User {
     }
 
     public JSONObject convertToJson() {
-        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("gender", this.gender).put("Date of Birth", this.birthDate).put("email", this.email).put("password", this.password);
+        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("Date of Birth", this.birthDate).put("email", this.email).put("password", this.password);
     }
 
     public void addInbox(Mail newInbox) {
