@@ -1,0 +1,10 @@
+{
+  "ID":0,
+  "from":"s@gmail.com",
+  "to":"ahmed@gmail.com",
+  "subject":"Congratulation",
+  "body":"Hey Budy Congrats on your success",
+  "favourite":false,
+  "state":"inbox",
+  "attachments":""
+}
