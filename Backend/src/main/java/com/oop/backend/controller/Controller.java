@@ -35,4 +35,44 @@ public class Controller {
     public ResponseEntity<String> login(@RequestBody String data) {
         return new ResponseEntity<>(server.login(data), HttpStatus.OK);
     }
+
+    @PostMapping ("/contacts")
+    public ResponseEntity<String> contacts() {
+        return new ResponseEntity<>(server.getData("Contacts"), HttpStatus.OK);
+    }
+
+    @PostMapping ("/draft")
+    public ResponseEntity<String> draft() {
+        return new ResponseEntity<>(server.getData("Draft"), HttpStatus.OK);
+    }
+
+    @PostMapping ("/sent")
+    public ResponseEntity<String> sent() {
+        return new ResponseEntity<>(server.getData("Sent"), HttpStatus.OK);
+    }
+
+    @PostMapping ("/trash")
+    public ResponseEntity<String> trash() {
+        return new ResponseEntity<>(server.getData("Trash"), HttpStatus.OK);
+    }
+
+    @PostMapping ("/inbox")
+    public ResponseEntity<String> inbox() {
+        return new ResponseEntity<>(server.getData("Inbox"), HttpStatus.OK);
+    }
+
+    //    @GetMapping ("/favourite")
+//    public ResponseEntity<String> favourite() {
+//        return new ResponseEntity<>(server.favourite, HttpStatus.OK);
+//    }
+
+    @PostMapping ("/edit")
+    public ResponseEntity<String> edit(@RequestParam String modify, @RequestParam  (required = false) String key, @RequestParam  (required = false) String replace) {
+        return new ResponseEntity<>(server.edit(modify,key,replace), HttpStatus.OK);
+    }
+
+    @GetMapping ("/filter")
+    public ResponseEntity<String> filter(@RequestParam String section, @RequestParam String key, @RequestParam String value) {
+        return new ResponseEntity<>(server.filter(section, key, value), HttpStatus.OK);
+    }
 }
