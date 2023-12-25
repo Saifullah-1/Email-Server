@@ -41,6 +41,12 @@ public class Server {
         user.setID(++ID);
         user.setPath(path);
 
+//        Mail mail = new Mail();
+//        mail.setBody("Hello");
+//        mail.setSubject("Hello");
+//        mail.setID(++mailID);
+//        user.addInbox(mail);
+
         File newUserFile = new File(path); // user folder
         Boolean created1 = newUserFile.mkdir();
         System.out.println(created1);

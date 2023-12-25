@@ -13,6 +13,8 @@ import java.util.List;
 
 public class Database {
     private static Database instance;
+
+
     private List<User> users = new ArrayList<>(); //will be priority queue
 
     private Database() {}
@@ -23,6 +25,8 @@ public class Database {
         }
         return instance;
     }
+
+
 
     public List<User> getUsers() {
         return users;
@@ -69,4 +73,6 @@ public class Database {
     public void addUser(User user) {
         this.users.add(user);
     }
+
+
 }
