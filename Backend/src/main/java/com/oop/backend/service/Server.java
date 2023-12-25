@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.oop.backend.module.Mail;
 import com.oop.backend.module.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,13 +25,16 @@ public class Server {
 
     public String signUp(String newUser) {
         JSONObject jsonObject = new JSONObject(newUser);
+        String path = "./Users/".concat(jsonObject.getString("email"));
+        File find = new File(path);
+        if (find.exists()){
+            return "Email already exists.";
+        }
         // check first if the email is found or not
 
         if (!EmailValidator.isValidEmail(jsonObject.getString("email")))
             return "Enter a valid email";
 
-
-        String path = "./Users/".concat(jsonObject.getString("email"));
         System.out.println(path);
         Gson gson = new Gson();
         User user = gson.fromJson(newUser, User.class);
@@ -44,7 +46,6 @@ public class Server {
 //        mail.setSubject("Hello");
 //        mail.setID(++mailID);
 //        user.addInbox(mail);
-
 
         File newUserFile = new File(path); // user folder
         Boolean created1 = newUserFile.mkdir();
