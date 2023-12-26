@@ -16,4 +16,10 @@ public interface IServer {
     String getData (String section);
 
     void sendEmail(String mail);
+
+    void starMail(String folder, long id);
+
+    void deleteMail(String folder, long id);
+
+    void draftMail(String mail);
 }

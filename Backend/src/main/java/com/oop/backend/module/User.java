@@ -11,7 +11,7 @@ public class User {
     private long ID;
     private String firstName;
     private String lastName;
-    private Date birthDate;
+//    private Date birthDate;
     private String email;
     private String password;
     private List<Mail> inbox = new ArrayList<>();
@@ -27,7 +27,7 @@ public class User {
         this.ID = ID;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.birthDate = birthDate;
+//        this.birthDate = birthDate;
         this.password = password;
         this.path = path;
     }
@@ -50,13 +50,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void sendMail(Mail sent) {
-        if (this.sent == null) {
-            this.sent = new ArrayList<>();
-        }
-        this.sent.add(sent);
     }
 
     public long getID() {
@@ -119,16 +112,23 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
-    }
+//    public Date getBirthDate() {
+//        return birthDate;
+//    }
 
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
+//    public void setBirthDate(Date birthDate) {
+//        this.birthDate = birthDate;
+//    }
 
     public JSONObject convertToJson() {
-        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("email", this.email).put("password", this.password).put("birthDate", this.birthDate.toString());
+        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("email", this.email).put("password", this.password);
+    }
+
+    public void sendMail(Mail sent) {
+        if (this.sent == null) {
+            this.sent = new ArrayList<>();
+        }
+        this.sent.add(sent);
     }
 
     public void addInbox(Mail newInbox) {
@@ -138,24 +138,15 @@ public class User {
         this.inbox.add(newInbox);
     }
 
-    public void addDraft(long id) {
-        for(Mail drafted : this.inbox) {
-            if (drafted.getID() == id) {
-                this.inbox.remove(drafted);
-                this.draft.add(drafted);
-                break;
-            }
+    public void addDraft(Mail mail) {
+        if (this.draft == null) {
+            this.draft = new ArrayList<>();
         }
+        this.draft.add(mail);
     }
 
-    public void deleteMail(long id) {
-        for(Mail deleted : this.inbox) {
-            if (deleted.getID() == id) {
-                this.inbox.remove(deleted);
-                this.trash.add(deleted);
-                break;
-            }
-        }
+    public void deleteMail(Mail mail) {
+        this.trash.add(mail);
     }
 
     public void addContact(Contact newContact) {

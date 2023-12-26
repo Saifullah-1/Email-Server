@@ -47,5 +47,18 @@ public class Proxy implements IServer {
         server.sendEmail(mail);
     }
 
+    @Override
+    public void starMail(String folder, long id) {
+        server.starMail(folder, id);
+    }
 
+    @Override
+    public void deleteMail(String folder, long id) {
+        server.deleteMail(folder, id);
+    }
+
+    @Override
+    public void draftMail(String mail) {
+        server.draftMail(mail);
+    }
 }

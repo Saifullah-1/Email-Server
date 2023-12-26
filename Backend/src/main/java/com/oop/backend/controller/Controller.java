@@ -36,27 +36,42 @@ public class Controller {
         server.sendEmail(mail);
     }
 
-    @PostMapping ("/contacts")
+    @PostMapping("/star")
+    public void starMsg(@RequestParam String folder, @RequestParam long id) {
+        this.server.starMail(folder, id);
+    }
+
+    @PostMapping("/draft")
+    public void draftMsg(@RequestBody String mail) {
+        this.server.draftMail(mail);
+    }
+
+    @PostMapping("/delete")
+    public void deleteMsg(@RequestParam String folder, @RequestParam long id) {
+        this.server.deleteMail(folder, id);
+    }
+
+    @PostMapping ("/contactsF")
     public ResponseEntity<String> contacts() {
         return new ResponseEntity<>(server.getData("Contacts"), HttpStatus.OK);
     }
 
-    @PostMapping ("/draft")
+    @PostMapping ("/draftF")
     public ResponseEntity<String> draft() {
         return new ResponseEntity<>(server.getData("Draft"), HttpStatus.OK);
     }
 
-    @PostMapping ("/sent")
+    @PostMapping ("/sentF")
     public ResponseEntity<String> sent() {
         return new ResponseEntity<>(server.getData("Sent"), HttpStatus.OK);
     }
 
-    @PostMapping ("/trash")
+    @PostMapping ("/trashF")
     public ResponseEntity<String> trash() {
         return new ResponseEntity<>(server.getData("Trash"), HttpStatus.OK);
     }
 
-    @PostMapping ("/inbox")
+    @PostMapping ("/inboxF")
     public ResponseEntity<String> inbox() {
         return new ResponseEntity<>(server.getData("Inbox"), HttpStatus.OK);
     }

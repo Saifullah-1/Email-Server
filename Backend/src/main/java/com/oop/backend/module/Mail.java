@@ -1,5 +1,6 @@
 package com.oop.backend.module;
 
+import com.google.gson.Gson;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,24 +8,24 @@ import java.util.List;
 
 public class Mail {
     private long ID;
-    private Date date;
+//    private Date date;
     private String senderName;
     private String receiverName;
     private String from;
-    private String to;
+    private List<String> to = new ArrayList<>();
     private String subject;
     private String body;
     private boolean favourite = false;
     private String state; // Inbox or Sent
     private List<String> attachments = new ArrayList<>();
 
-    public Date getDate() {
-        return date;
-    }
+//    public Date getDate() {
+//        return date;
+//    }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+//    public void setDate(Date date) {
+//        this.date = date;
+//    }
 
     public String getSenderName() {
         return senderName;
@@ -46,12 +47,18 @@ public class Mail {
         this.from = from;
     }
 
-    public String getTo() {
+    public List<String> getTo() {
         return to;
     }
 
-    public void setTo(String to) {
+    public void setTo(List<String> to) {
         this.to = to;
+    }
+
+    public void addTo(String to) {
+        if (to == null)
+            this.to = new ArrayList<>();
+        this.to.add(to);
     }
 
     public String getSubject() {
@@ -115,9 +122,7 @@ public class Mail {
     }
 
     public JSONObject convertToJson() {
-        if (this.state.equalsIgnoreCase("inbox"))
-            return new JSONObject().put("ID", this.ID).put("From", this.from).put("Subject", this.subject).put("Body", this.body).put("favourite", this.favourite).put("Type", this.state);
-        else // "sent"
-            return new JSONObject().put("ID", this.ID).put("To", this.to).put("Subject", this.subject).put("Body", this.body).put("favourite", this.favourite).put("Type", this.state);
+        Gson gson = new Gson();
+        return new JSONObject().put("ID", this.ID).put("from", this.from).put("to", gson.toJson(this.to)).put("Subject", this.subject).put("body", this.body).put("favourite", this.favourite).put("state", this.state);
     }
 }

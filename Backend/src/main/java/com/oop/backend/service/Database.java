@@ -1,8 +1,11 @@
 package com.oop.backend.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.oop.backend.module.User;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -45,5 +48,68 @@ public class Database {
 
     public void addUser(User user) {
         this.users.add(user);
+    }
+
+    public User uploadUserData(String email) {
+        Gson gson = new Gson();
+
+        JSONObject userObject = new JSONObject();
+        String path = "./Users/".concat(email);
+
+        try { //  info file
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object info = objectMapper.readValue(new File(path.concat("/info.json")), new TypeReference<Object>() {});
+
+            String jsonStr = gson.toJson(info);
+            userObject = new JSONObject(jsonStr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        List<String> list = new ArrayList<>();
+        list.add("/Inbox/Inbox.json");
+        list.add("/Sent/Sent.json");
+        list.add("/Draft/Draft.json");
+        list.add("/Trash/Trash.json");
+        list.add("/Contacts/Contacts.json");
+
+        for (String s : list) {
+            try { //  inbox file
+                if (!new File(path.concat(s)).exists()) {
+                    if (s.endsWith("Inbox.json"))
+                        userObject.put("inbox", new ArrayList<>());
+                    else if (s.endsWith("Sent.json"))
+                        userObject.put("sent", new ArrayList<>());
+                    else if (s.endsWith("Draft.json"))
+                        userObject.put("draft", new ArrayList<>());
+                    else if (s.endsWith("Trash.json"))
+                        userObject.put("trash", new ArrayList<>());
+                    else if (s.endsWith("Contacts.json"))
+                        userObject.put("contacts", new ArrayList<>());
+                    continue;
+                }
+                ObjectMapper objectMapper = new ObjectMapper();
+                List<Object> mails = objectMapper.readValue(new File(path.concat(s)), new TypeReference<List<Object>>() {});
+
+                String jsonStr = gson.toJson(mails);
+                if (s.endsWith("Inbox.json"))
+                    userObject.put("inbox", jsonStr);
+                else if (s.endsWith("Sent.json"))
+                    userObject.put("sent", jsonStr);
+                else if (s.endsWith("Draft.json"))
+                    userObject.put("draft", jsonStr);
+                else if (s.endsWith("Trash.json"))
+                    userObject.put("trash", jsonStr);
+                else if (s.endsWith("Contacts.json"))
+                    userObject.put("contacts", jsonStr);
+
+                System.out.println(userObject.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println(userObject.toString());
+        return gson.fromJson(userObject.toString(), User.class);
     }
 }
