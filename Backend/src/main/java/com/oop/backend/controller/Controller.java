@@ -89,11 +89,11 @@ public class Controller {
         return new ResponseEntity<>(this.server.search(folder, key), HttpStatus.OK);
     }
 
-//    @GetMapping("/sort")
-//    public ResponseEntity<String> search(@RequestParam String folder) {
-//        if (this.server.search(folder, key) == null)
-//            return new ResponseEntity<>("[]", HttpStatus.OK);
-//        return new ResponseEntity<>(this.server.sort(folder), HttpStatus.OK);
-//    }
+    @GetMapping("/sort")
+    public ResponseEntity<String> sort(@RequestParam String folder, @RequestParam String method) {
+        if (this.server.sort(folder, method) == null)
+            return new ResponseEntity<>("[]", HttpStatus.OK);
+        return new ResponseEntity<>(this.server.sort(folder, method), HttpStatus.OK);
+    }
 
 }

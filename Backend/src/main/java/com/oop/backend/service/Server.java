@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -88,29 +90,41 @@ public class Server {
         database.updateUserData(path.concat("/info.json"), user, "new");
         setCurrentUser(jsonObject.getString("email"));
 
-//        Mail mail1 = new Mail();
-//        mail1.setID(++mailID);
-//        mail1.setsenderName("Saifullah");
-//        mail1.setReceiverName("Ahmed");
-//        mail1.setSubject("Hello");
-//        mail1.setBody("jkldhsflkhdlfhlkdh;kskalkadsfkdl;kfas;klfnlkdsackdls dscbsdkljvbdsajb skjcBskdjv");
-//        mail1.setFrom(jsonObject.getString("email"));
-//        mail1.setTo("a@gmail.com");
-//        mail1.setState("sent");
-//
-//        user.sendMail(mail1);
-//
-//        Mail mail2 = new Mail();
-//        mail2.setID(++mailID);
-//        mail2.setsenderName("Ahmed");
-//        mail2.setReceiverName("Saifullah");
-//        mail2.setSubject("Hello");
-//        mail2.setBody("jkldhsflkhdlfhlkdh;kskalkadsfkdl;kfas;klfnlkdsackdls dscbsdkljvbdsajb skjcBskdjv");
-//        mail2.setTo(jsonObject.getString("email"));
-//        mail2.setFrom("a@gmail.com");
-//        mail2.setState("inbox");
-//
-//        user.addInbox(mail2);
+        Mail mail1 = new Mail();
+        mail1.setID(++mailID);
+        mail1.setReceiverName("Saifullah");
+        mail1.setSenderName("ahmed");
+        mail1.setSubject("Hello");
+        mail1.setBody("jkldhsflkhdlfhlkdh;kskalkadsfkdl;kfas;klfnlkdsackdls dscbsdkljvbdsajb skjcBskdjv");
+        mail1.setTo(jsonObject.getString("email"));
+        mail1.setFrom("a@gmail.com");
+        mail1.setState("inbox");
+
+        user.addInbox(mail1);
+
+        Mail mail2 = new Mail();
+        mail2.setID(++mailID);
+        mail2.setSenderName("Mohamed");
+        mail2.setReceiverName("Saifullah");
+        mail2.setSubject("Hello");
+        mail2.setBody("jkldhsflkhdlfhlkdh;kskalkadsfkdl;kfas;klfnlkdsackdls dscbsdkljvbdsajb skjcBskdjv");
+        mail2.setTo(jsonObject.getString("email"));
+        mail2.setFrom("a@gmail.com");
+        mail2.setState("inbox");
+
+        user.addInbox(mail2);
+
+        Mail mail3 = new Mail();
+        mail3.setID(++mailID);
+        mail3.setSenderName("kassam");
+        mail3.setReceiverName("Saifullah");
+        mail3.setSubject("Hello");
+        mail3.setBody("jkldhsflkhdlfhlkdh;kskalkadsfkdl;kfas;klfnlkdsackdls dscbsdkljvbdsajb skjcBskdjv");
+        mail3.setTo(jsonObject.getString("email"));
+        mail3.setFrom("k@gmail.com");
+        mail3.setState("inbox");
+
+        user.addInbox(mail3);
 
 
         this.onlineUser = user;
@@ -310,7 +324,7 @@ public class Server {
             folderMails = this.onlineUser.getTrash();
 
         for (Mail mail : folderMails) {
-            String sender = mail.getsenderName().toLowerCase();
+            String sender = mail.getSenderName().toLowerCase();
             if (sender.contains(key)) {
                 found.add(mail);
             }
@@ -429,26 +443,103 @@ public class Server {
     }
 
     /*                                          SORT                                          */
-//    public List<Mail> sortByDate(String folder) {
-//
-//    }
-//
-//    public List<Mail> sortBySender(String folder) {
-//
-//    }
-//
-//    public List<Mail> sortByReceiver(String folder) {
-//
-//    }
-//
-//    public List<Mail> sortByImportance(String folder) {
-//
-//    }
-//
-//    public List<Mail> sortBySubject(String folder) {
-//
-//    }
+    public String sort(String folder, String method) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
 
+        List<Mail> sorted = null;
+        if (method.equalsIgnoreCase("sender"))
+            sorted = sortBySender(folder);
+        else if (method.equalsIgnoreCase("receiver"))
+            sorted = sortByReceiver(folder);
+        else if (method.equalsIgnoreCase("date"))
+            sorted = sortByDate(folder);
+        else if (method.equalsIgnoreCase("importance"))
+            sorted = sortByImportance(folder);
+        else if (method.equalsIgnoreCase("subject"))
+            sorted = sortBySubject(folder);
+        return gson.toJson(sorted);
+    }
 
+    public List<Mail> sortByDate(String folder) {
+        List<Mail> emails = null;
+        if (folder.equalsIgnoreCase("inbox"))
+            emails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            emails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            emails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            emails = this.onlineUser.getTrash();
+
+        emails.sort(Comparator.comparing(Mail::getDate));
+
+        return emails;
+    }
+
+    public List<Mail> sortBySender(String folder) {
+        List<Mail> emails = null;
+        if (folder.equalsIgnoreCase("inbox"))
+            emails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            emails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            emails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            emails = this.onlineUser.getTrash();
+
+        emails.sort(Comparator.comparing(Mail::getSenderName));
+
+        return emails;
+    }
+
+    public List<Mail> sortByReceiver(String folder) {
+        List<Mail> emails = null;
+        if (folder.equalsIgnoreCase("inbox"))
+            emails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            emails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            emails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            emails = this.onlineUser.getTrash();
+
+        emails.sort(Comparator.comparing(Mail::getReceiverName));
+
+        return emails;
+    }
+
+    public List<Mail> sortByImportance(String folder) {
+        List<Mail> emails = null;
+        if (folder.equalsIgnoreCase("inbox"))
+            emails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            emails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            emails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            emails = this.onlineUser.getTrash();
+
+        emails.sort(Comparator.comparing(Mail::isFavourite));
+
+        return emails;
+    }
+
+    public List<Mail> sortBySubject(String folder) {
+        List<Mail> emails = null;
+        if (folder.equalsIgnoreCase("inbox"))
+            emails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            emails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            emails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            emails = this.onlineUser.getTrash();
+
+        emails.sort(Comparator.comparing(Mail::getSubject));
+
+        return emails;
+    }
 
 }

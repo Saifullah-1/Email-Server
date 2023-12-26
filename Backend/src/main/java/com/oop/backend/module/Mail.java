@@ -18,14 +18,25 @@ public class Mail {
     private String state; // Inbox or Sent
     private List<String> attachments = new ArrayList<>();
 
-//    public LocalDateTime getDateTime() { return date;}
-//
-//    public void setDateTime() {
-//        date = LocalDateTime.now();
-//    }
-//        DateTimeFormatter myFormater = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-//        String formattedDate = date.format(myFormatObj);
+    public Date getDate() {
+        return date;
+    }
 
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
 
     public String getFrom() {
         return from;
@@ -89,14 +100,6 @@ public class Mail {
 
     public void setID(long ID) {
         this.ID = ID;
-    }
-
-    public String getsenderName() {
-        return senderName;
-    }
-
-    public void setsenderName(String senderName) {
-        this.senderName = senderName;
     }
 
     public String getReceiverName() {
