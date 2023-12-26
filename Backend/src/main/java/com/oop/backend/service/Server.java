@@ -15,12 +15,11 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-@Service
-public class Server {
+
+public class Server implements IServer {
     private long ID = 0;
     private long mailID = 0;
     private static String currentUser;
@@ -131,7 +130,7 @@ public class Server {
         return new Gson().toJson(database.getUsers());
     }
 
-    public String login (String data){
+    public String login (String data) {
         JSONObject dataObj = new JSONObject(data);
         String path = "./Users/".concat(dataObj.getString("email"));
         System.out.println(path);
@@ -180,7 +179,7 @@ public class Server {
         }
     }
 
-    public String getData (String section){
+    public String getData (String section) {
         String userEmail = getCurrentUser();
         String path = "./Users/".concat(userEmail);
         System.out.println(path);
@@ -210,7 +209,7 @@ public class Server {
         }
     }
 
-    public String filter (String section, String key, String value){
+    public String filter (String section, String key, String value) {
         String userEmail = getCurrentUser();
         section = section.toLowerCase();
         section = capitalize(section);
@@ -257,7 +256,7 @@ public class Server {
         }
     }
 
-    public String edit (String modify, String key, String replace){
+    public String edit (String modify, String key, String replace) {
         String userEmail = getCurrentUser();
         String path = "./Users/".concat(userEmail);
         System.out.println(path);

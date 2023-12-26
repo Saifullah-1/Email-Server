@@ -1,26 +1,20 @@
 package com.oop.backend.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.oop.backend.module.User;
-import com.oop.backend.service.Server;
-import org.json.JSONObject;
+import com.oop.backend.service.IServer;
+import com.oop.backend.service.Proxy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/mail")
 public class Controller {
-    private final Server server;
-    public Controller(Server server) {
+    private final IServer server;
+
+    public Controller(Proxy server) {
         this.server = server;
         File users = new File("./Users");
         Boolean start = users.mkdir();
