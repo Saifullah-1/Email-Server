@@ -42,5 +42,10 @@ public class Proxy implements IServer {
         return server.getData(section);
     }
 
+    @Override
+    public void sendEmail(String mail) {
+        server.sendEmail(mail);
+    }
+
 
 }

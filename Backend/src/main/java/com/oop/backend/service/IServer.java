@@ -14,4 +14,6 @@ public interface IServer {
     String sort(String folder, String method);
 
     String getData (String section);
+
+    void sendEmail(String mail);
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.oop.backend.module.User;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,25 +28,14 @@ public class Database {
         return users;
     }
 
-    public void updateUserData(String path, User user, String state) {
-        if (state.equals("new"))
-            this.users.add(user);
-        else {
-            for (User edited : this.users) {
-                if (edited.getID() == user.getID()) {
-                    this.users.remove(edited);
-                    this.users.add(user);
-                    break;
-                }
-            }
-        }
-
+    public void updateUserData(String path, String data) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
         Gson gson = gsonBuilder.create();
 
+
         try(FileWriter fileWriter = new FileWriter(path)) {
-            fileWriter.write(user.convertToJson().toString());
+            fileWriter.write(data);
             fileWriter.flush();
             return;
         }catch (IOException e) {
@@ -56,5 +46,4 @@ public class Database {
     public void addUser(User user) {
         this.users.add(user);
     }
-
 }

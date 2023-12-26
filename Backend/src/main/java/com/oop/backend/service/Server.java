@@ -10,7 +10,6 @@ import com.oop.backend.module.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import static org.springframework.util.StringUtils.capitalize;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,7 +85,8 @@ public class Server implements IServer {
         gsonBuilder.setPrettyPrinting();
         gson = gsonBuilder.create();
 
-        database.updateUserData(path.concat("/info.json"), user, "new");
+        database.updateUserData(path.concat("/info.json"), user.convertToJson().toString());
+        database.addUser(user);
         setCurrentUser(jsonObject.getString("email"));
 
         Mail mail1 = new Mail();
@@ -539,6 +539,45 @@ public class Server implements IServer {
         emails.sort(Comparator.comparing(Mail::getSubject));
 
         return emails;
+    }
+
+    public void sendEmail(String mail) {
+        Gson gson = new Gson();
+        Mail send = gson.fromJson(mail, Mail.class);
+        send.setID(++mailID);
+        send.setState("sent");
+        String name = this.onlineUser.getFirstName().concat(" ").concat(this.onlineUser.getLastName());
+        send.setSenderName(name);
+        this.onlineUser.sendMail(send);
+
+        String path = "./Users/".concat(send.getTo());
+        File file = new File(path);
+        if (!file.exists())
+            return;
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object info = objectMapper.readValue(new File(path.concat("/info.json")), new TypeReference<Object>() {});
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.setPrettyPrinting();
+            gson = gsonBuilder.create();
+
+            String jsonStr = gson.toJson(info);
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            String rec = jsonObject.getString("firstName").concat(" ").concat(jsonObject.getString("lastName"));
+            send.setReceiverName(rec);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String recPath = path.concat("/Inbox/").concat(send.getFrom()).concat(".json");
+        send.setState("inbox");
+        this.database.updateUserData(recPath, new JSONObject(send).toString());
+
+        String sentPath = "./Users/".concat(send.getFrom()).concat("/Sent/").concat(send.getTo()).concat(".json");
+
+        this.database.updateUserData(sentPath, new JSONObject(send).toString());
     }
 
 }

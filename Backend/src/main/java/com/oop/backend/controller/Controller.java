@@ -31,10 +31,10 @@ public class Controller {
         return new ResponseEntity<>(server.login(data), HttpStatus.OK);
     }
 
-//    @PostMapping("/mailto")
-//    public void sendEmail(@RequestParam String receiver, @RequestBody String mail) {
-//
-//    }
+    @PostMapping("/mailto")
+    public void sendEmail(@RequestBody String mail) {
+        server.sendEmail(mail);
+    }
 
     @PostMapping ("/contacts")
     public ResponseEntity<String> contacts() {
