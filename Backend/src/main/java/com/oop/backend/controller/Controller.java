@@ -26,6 +26,7 @@ public class Controller {
         Boolean start = users.mkdir();
         System.out.println(start);
     }
+
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody String data) {
         return new ResponseEntity<>(server.signUp(data), HttpStatus.OK);
@@ -35,6 +36,11 @@ public class Controller {
     public ResponseEntity<String> login(@RequestBody String data) {
         return new ResponseEntity<>(server.login(data), HttpStatus.OK);
     }
+
+//    @PostMapping("/mailto")
+//    public void sendEmail(@RequestParam String receiver, @RequestBody String mail) {
+//
+//    }
 
     @PostMapping ("/contacts")
     public ResponseEntity<String> contacts() {
@@ -75,4 +81,19 @@ public class Controller {
     public ResponseEntity<String> filter(@RequestParam String section, @RequestParam String key, @RequestParam String value) {
         return new ResponseEntity<>(server.filter(section, key, value), HttpStatus.OK);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<String> search(@RequestParam String folder, @RequestBody String key) {
+        if (this.server.search(folder, key) == null)
+            return new ResponseEntity<>("[]", HttpStatus.OK);
+        return new ResponseEntity<>(this.server.search(folder, key), HttpStatus.OK);
+    }
+
+//    @GetMapping("/sort")
+//    public ResponseEntity<String> search(@RequestParam String folder) {
+//        if (this.server.search(folder, key) == null)
+//            return new ResponseEntity<>("[]", HttpStatus.OK);
+//        return new ResponseEntity<>(this.server.sort(folder), HttpStatus.OK);
+//    }
+
 }

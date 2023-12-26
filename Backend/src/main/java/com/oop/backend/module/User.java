@@ -21,7 +21,8 @@ public class User {
     private List<Contact> contacts = new ArrayList<>();
     private String path;
 
-//    private User() {}
+    public User() {}
+
     public User(long ID, String firstName, String lastName, Date birthDate, String password, String path) {
         this.ID = ID;
         this.firstName = firstName;
@@ -52,6 +53,9 @@ public class User {
     }
 
     public void sendMail(Mail sent) {
+        if (this.sent == null) {
+            this.sent = new ArrayList<>();
+        }
         this.sent.add(sent);
     }
 
@@ -124,7 +128,7 @@ public class User {
     }
 
     public JSONObject convertToJson() {
-        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("Date of Birth", this.birthDate).put("email", this.email).put("password", this.password);
+        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("email", this.email).put("password", this.password).put("birthDate", this.birthDate.toString());
     }
 
     public void addInbox(Mail newInbox) {

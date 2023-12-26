@@ -4,48 +4,58 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.oop.backend.module.Contact;
+import com.oop.backend.module.Mail;
 import com.oop.backend.module.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import static org.springframework.util.StringUtils.capitalize;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class Server {
     private long ID = 0;
     private long mailID = 0;
+    private static String currentUser;
+    private User onlineUser;
     private Database database;
 
     public Server() {
         this.database = Database.getInstance();
     }
 
+    public void setCurrentUser(String email){
+        currentUser = email;
+    }
+
+    public String getCurrentUser(){
+        return currentUser;
+    }
 
     public String signUp(String newUser) {
         JSONObject jsonObject = new JSONObject(newUser);
         String path = "./Users/".concat(jsonObject.getString("email"));
         File find = new File(path);
-        if (find.exists()){
+
+        System.out.println(find.exists());
+        if (find.exists()){ // check first if the email is found or not
             return "Email already exists.";
         }
-        // check first if the email is found or not
 
         if (!EmailValidator.isValidEmail(jsonObject.getString("email")))
-            return "Enter a valid email";
+            return "Enter a valid email.";
 
-        System.out.println(path);
+//        System.out.println(path);
+        System.out.println(jsonObject.toString());
         Gson gson = new Gson();
-        User user = gson.fromJson(newUser, User.class);
+        User user = gson.fromJson(jsonObject.toString(), User.class);
         user.setID(++ID);
         user.setPath(path);
-
-//        Mail mail = new Mail();
-//        mail.setBody("Hello");
-//        mail.setSubject("Hello");
-//        mail.setID(++mailID);
-//        user.addInbox(mail);
 
         File newUserFile = new File(path); // user folder
         Boolean created1 = newUserFile.mkdir();
@@ -76,8 +86,34 @@ public class Server {
         gson = gsonBuilder.create();
 
         database.updateUserData(path.concat("/info.json"), user, "new");
-//        database.updateUserData(path.concat("/Inbox/inbox.json"), user, "edit");
+        setCurrentUser(jsonObject.getString("email"));
 
+//        Mail mail1 = new Mail();
+//        mail1.setID(++mailID);
+//        mail1.setsenderName("Saifullah");
+//        mail1.setReceiverName("Ahmed");
+//        mail1.setSubject("Hello");
+//        mail1.setBody("jkldhsflkhdlfhlkdh;kskalkadsfkdl;kfas;klfnlkdsackdls dscbsdkljvbdsajb skjcBskdjv");
+//        mail1.setFrom(jsonObject.getString("email"));
+//        mail1.setTo("a@gmail.com");
+//        mail1.setState("sent");
+//
+//        user.sendMail(mail1);
+//
+//        Mail mail2 = new Mail();
+//        mail2.setID(++mailID);
+//        mail2.setsenderName("Ahmed");
+//        mail2.setReceiverName("Saifullah");
+//        mail2.setSubject("Hello");
+//        mail2.setBody("jkldhsflkhdlfhlkdh;kskalkadsfkdl;kfas;klfnlkdsackdls dscbsdkljvbdsajb skjcBskdjv");
+//        mail2.setTo(jsonObject.getString("email"));
+//        mail2.setFrom("a@gmail.com");
+//        mail2.setState("inbox");
+//
+//        user.addInbox(mail2);
+
+
+        this.onlineUser = user;
         return new Gson().toJson(database.getUsers());
     }
 
@@ -104,6 +140,8 @@ public class Server {
             String password = jsonObject.getString("password");
             if (!password.equals(dataObj.getString("password"))) return "Invalid Password.";
 
+            setCurrentUser(jsonObject.getString("email"));
+
             File inboxMessages = new File(path.concat("/Inbox"));
             String[] messages = inboxMessages.list();
             JSONArray inbox = new JSONArray();
@@ -127,6 +165,290 @@ public class Server {
             return e.toString();
         }
     }
+
+    public String getData (String section){
+        String userEmail = getCurrentUser();
+        String path = "./Users/".concat(userEmail);
+        System.out.println(path);
+
+        try {
+            File Folder = new File(path.concat("/"+section));
+            String[] items = Folder.list();
+            JSONArray objects = new JSONArray();
+
+            for (String s : items){
+                ObjectMapper objectMapper = new ObjectMapper();
+                Object message = objectMapper.readValue(new File(path.concat("/"+section+"/"+s)), new TypeReference<Object>() {});
+
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                gsonBuilder.setPrettyPrinting();
+                Gson gson = gsonBuilder.create();
+
+                String jsonStr = gson.toJson(message);
+                JSONObject recieved = new JSONObject(jsonStr);
+                objects.put(recieved);
+            };
+            return objects.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+    }
+
+    public String filter (String section, String key, String value){
+        String userEmail = getCurrentUser();
+        section = section.toLowerCase();
+        section = capitalize(section);
+        key = key.toLowerCase();
+        value = value.toLowerCase();
+        String path = "./Users/".concat(userEmail+"/"+section);
+        System.out.println(path);
+
+        try {
+            File Folder = new File(path);
+            String[] items = Folder.list();
+            JSONArray objects = new JSONArray();
+
+            for (String s : items){
+                ObjectMapper objectMapper = new ObjectMapper();
+                Object message = objectMapper.readValue(new File(path.concat("/"+s)), new TypeReference<Object>() {});
+
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                gsonBuilder.setPrettyPrinting();
+                Gson gson = gsonBuilder.create();
+
+                String jsonStr = gson.toJson(message);
+                JSONObject mail = new JSONObject(jsonStr);
+
+                if (key.equals("subject")){
+                    String check = mail.getString(key).toLowerCase();
+                    System.out.println("File : "+path.concat("/"+s)+",, The Subject = "+check+" ,,, The Value = "+value);
+                    if (check.contains(value)){
+                        objects.put(mail);
+                    }
+                }
+                else if (key.equals("sender")){
+                    String check = mail.getString("senderName").toLowerCase();
+                    if (check.contains(value)){
+                        objects.put(mail);
+                    }
+                }
+            }
+            return objects.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+    }
+
+    public String edit (String modify, String key, String replace){
+        String userEmail = getCurrentUser();
+        String path = "./Users/".concat(userEmail);
+        System.out.println(path);
+        File Folder = new File(path);
+        if (modify.equals("delete")){
+            Folder.delete();
+            setCurrentUser(null);
+            return null;
+            // Returns to the login page
+        }
+        else{
+            System.out.println(path);
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Object user = objectMapper.readValue(new File(path.concat("/info.json")), new TypeReference<Object>() {});
+
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                gsonBuilder.setPrettyPrinting();
+                Gson gson = gsonBuilder.create();
+
+                String jsonStr = gson.toJson(user);
+                JSONObject userToEdit = new JSONObject(jsonStr);
+
+                userToEdit.put(key,replace);
+                return userToEdit.toString();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                return e.toString();
+            }
+        }
+    }
+
+
+    /*                                          SEARCH                                          */
+    public String search(String folder, String key) { // To be sorted
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
+
+        if (folder.equalsIgnoreCase("contact"))
+            return gson.toJson(searchContact(key.toLowerCase()));
+
+        List<Mail> allFound = new ArrayList<>();
+        allFound = searchBySubject(folder, key.toLowerCase());
+        allFound = combine(allFound, searchByBody(folder, key.toLowerCase()));
+        allFound = combine(allFound, searchBySenderName(folder, key.toLowerCase()));
+        allFound = combine(allFound, searchByReceiverName(folder, key.toLowerCase()));
+
+
+        return gson.toJson(allFound);
+    }
+
+    public List<Mail> searchBySenderName(String folder, String key) {
+        List<Mail> folderMails = null;
+        List<Mail> found = new ArrayList<>();
+        if (folder.equalsIgnoreCase("inbox"))
+            folderMails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            folderMails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            folderMails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            folderMails = this.onlineUser.getTrash();
+
+        for (Mail mail : folderMails) {
+            String sender = mail.getsenderName().toLowerCase();
+            if (sender.contains(key)) {
+                found.add(mail);
+            }
+        }
+        return found;
+    }
+
+    public List<Mail> searchBySubject(String folder, String key) {
+        List<Mail> folderMails = null;
+        List<Mail> found = new ArrayList<>();
+        if (folder.equalsIgnoreCase("inbox"))
+            folderMails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            folderMails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            folderMails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            folderMails = this.onlineUser.getTrash();
+
+        for (Mail mail : folderMails) {
+            String subject = mail.getSubject().toLowerCase();
+            if (subject.contains(key)) {
+                found.add(mail);
+            }
+        }
+
+        return found;
+    }
+
+    public List<Mail> searchByReceiverName(String folder, String key) {
+        List<Mail> folderMails = null;
+        List<Mail> found = new ArrayList<>();
+        if (folder.equalsIgnoreCase("inbox"))
+            folderMails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            folderMails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            folderMails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            folderMails = this.onlineUser.getTrash();
+
+        for (Mail mail : folderMails) {
+            String receiver = mail.getReceiverName().toLowerCase();
+            if (receiver.contains(key)) {
+                found.add(mail);
+            }
+        }
+
+        return found;
+    }
+
+    public List<Mail> searchByBody(String folder, String key) {
+        List<Mail> folderMails = null;
+        List<Mail> found = new ArrayList<>();
+        if (folder.equalsIgnoreCase("inbox"))
+            folderMails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            folderMails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            folderMails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            folderMails = this.onlineUser.getTrash();
+
+        for (Mail mail : folderMails) {
+            String body = mail.getBody().toLowerCase();
+            if (body.contains(key)) {
+                found.add(mail);
+            }
+        }
+
+        return found;
+    }
+
+    public List<Contact> searchContact(String key) {
+        List<Contact> found = new ArrayList<>();
+        for (Contact contact : this.onlineUser.getContacts()) {
+            String name = contact.getFirstName().concat("").concat(contact.getLastName()).toLowerCase();
+            if (name.equalsIgnoreCase(key)) {
+                found.add(contact);
+            }
+        }
+        return found;
+    }
+
+//    public List<Mail> searchByAttachment(String folder, String key) {
+//        List<Mail> folderMails = null;
+//        List<Mail> found = new ArrayList<>();
+//        if (folder.equalsIgnoreCase("inbox"))
+//            folderMails = this.onlineUser.getInbox();
+//        else if (folder.equalsIgnoreCase("draft"))
+//            folderMails = this.onlineUser.getDraft();
+//        else if (folder.equalsIgnoreCase("sent"))
+//            folderMails = this.onlineUser.getSent();
+//        else if (folder.equalsIgnoreCase("trash"))
+//            folderMails = this.onlineUser.getTrash();
+//
+//        for (Mail mail : folderMails) {
+//            String receiver = mail.getReceiverName().toLowerCase();
+//            if (receiver.contains(key)) {
+//                found.add(mail);
+//            }
+//        }
+//
+//        return found;
+//    }
+
+    public List<Mail> combine(List<Mail> list1, List<Mail> list2) {
+        List<Mail> newList = list1;
+        for (Mail mail : list2) {
+            if (!newList.contains(mail)) {
+                newList.add(mail);
+            }
+        }
+
+        return newList;
+    }
+
+    /*                                          SORT                                          */
+//    public List<Mail> sortByDate(String folder) {
+//
+//    }
+//
+//    public List<Mail> sortBySender(String folder) {
+//
+//    }
+//
+//    public List<Mail> sortByReceiver(String folder) {
+//
+//    }
+//
+//    public List<Mail> sortByImportance(String folder) {
+//
+//    }
+//
+//    public List<Mail> sortBySubject(String folder) {
+//
+//    }
+
 
 
 }

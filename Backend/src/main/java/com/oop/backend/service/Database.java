@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.oop.backend.module.User;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,8 +12,7 @@ import java.util.List;
 public class Database {
     private static Database instance;
 
-
-    private List<User> users = new ArrayList<>(); //will be priority queue
+    private List<User> users = new ArrayList<>();
 
     private Database() {}
 
@@ -25,8 +22,6 @@ public class Database {
         }
         return instance;
     }
-
-
 
     public List<User> getUsers() {
         return users;
@@ -50,19 +45,7 @@ public class Database {
         Gson gson = gsonBuilder.create();
 
         try(FileWriter fileWriter = new FileWriter(path)) {
-
-            if (path.endsWith("inbox.json"))
-                fileWriter.write(gson.toJson(user.getInbox()));
-            else if (path.endsWith("contacts.json"))
-                fileWriter.write(gson.toJson(user.getContacts()));
-            else if (path.endsWith("sent.json"))
-                fileWriter.write(gson.toJson(user.getSent()));
-            else if (path.endsWith("draft.json"))
-                fileWriter.write(gson.toJson(user.getDraft()));
-            else if (path.endsWith("trash.json"))
-                fileWriter.write(gson.toJson(user.getTrash()));
-            else if (path.endsWith("info.json"))
-                fileWriter.write(user.convertToJson().toString());
+            fileWriter.write(user.convertToJson().toString());
             fileWriter.flush();
             return;
         }catch (IOException e) {
@@ -73,6 +56,5 @@ public class Database {
     public void addUser(User user) {
         this.users.add(user);
     }
-
 
 }

@@ -1,15 +1,15 @@
 package com.oop.backend.module;
 
 import org.json.JSONObject;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Mail {
     private long ID;
-    private LocalDateTime date;
+    private Date date;
     private String senderName;
+    private String receiverName;
     private String from;
     private String to;
     private String subject;
@@ -18,11 +18,11 @@ public class Mail {
     private String state; // Inbox or Sent
     private List<String> attachments = new ArrayList<>();
 
-    public LocalDateTime getDateTime() { return date;}
-
-    public void setDateTime() {
-        date = LocalDateTime.now();
-    }
+//    public LocalDateTime getDateTime() { return date;}
+//
+//    public void setDateTime() {
+//        date = LocalDateTime.now();
+//    }
 //        DateTimeFormatter myFormater = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 //        String formattedDate = date.format(myFormatObj);
 
@@ -97,6 +97,14 @@ public class Mail {
 
     public void setsenderName(String senderName) {
         this.senderName = senderName;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 
     public void setAttachments(List<String> attachments) {
