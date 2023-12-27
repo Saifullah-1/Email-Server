@@ -17,6 +17,10 @@ public interface IServer {
 
     String getData (String section);
 
+    String createContact(String info);
+
+    String deleteContact(long id);
+
     void DeleteUser();
 
     void sendEmail(String mail, JSONArray attachments);
