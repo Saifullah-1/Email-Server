@@ -105,6 +105,7 @@ public class Database {
                     userObject.put("contacts", jsonArr);
 
                 System.out.println(userObject.toString());
+                System.out.println(path);
             } catch (IOException e) {
                 e.printStackTrace();
             }

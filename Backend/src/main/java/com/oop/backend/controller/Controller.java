@@ -87,7 +87,7 @@ public class Controller {
     }
 
     @GetMapping ("/filter")
-    public ResponseEntity<String> filter(@RequestParam String section, @RequestParam String key, @RequestParam String value) {
+    public ResponseEntity<String> filter(@RequestParam String section, @RequestParam (required = false) String key, @RequestParam (required = false) String value) {
         return new ResponseEntity<>(server.filter(section, key, value), HttpStatus.OK);
     }
 

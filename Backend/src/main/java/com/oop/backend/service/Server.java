@@ -150,8 +150,7 @@ public class Server implements IServer {
 
             onlineUser= database.uploadUserData(validUser.getString("email"));
             List<Mail> inbox = onlineUser.getInbox();
-            System.out.println(inbox.toString());
-            return inbox.toString();
+            return gson.toJson(inbox);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -162,6 +161,7 @@ public class Server implements IServer {
     public String getData (String section) {
 
         String path = onlineUser.getPath();
+        System.out.println(path);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
         Gson gson = gsonBuilder.create();
@@ -170,11 +170,11 @@ public class Server implements IServer {
             ObjectMapper objectMapper = new ObjectMapper();
             Object info = objectMapper.readValue(new File(path.concat("/info.json")), new TypeReference<Object>() {});
             JSONObject jsonInfo = new JSONObject(info);
-            if (section.equalsIgnoreCase("inbox")) return onlineUser.getInbox().toString();
-            else if (section.equalsIgnoreCase("contacts")) return onlineUser.getContacts().toString();
-            else if (section.equalsIgnoreCase("draft")) return onlineUser.getDraft().toString();
-            else if (section.equalsIgnoreCase("sent")) return onlineUser.getSent().toString();
-            else if (section.equalsIgnoreCase("trash")) return onlineUser.getTrash().toString();
+            if (section.equalsIgnoreCase("inbox")) return gson.toJson(onlineUser.getInbox());
+            else if (section.equalsIgnoreCase("contacts")) return gson.toJson(onlineUser.getContacts());
+            else if (section.equalsIgnoreCase("draft")) return gson.toJson(onlineUser.getDraft());
+            else if (section.equalsIgnoreCase("sent")) return gson.toJson(onlineUser.getSent());
+            else if (section.equalsIgnoreCase("trash")) return  gson.toJson(onlineUser.getTrash());
             else return jsonInfo.toString();
         }
         catch (IOException e) {
@@ -184,14 +184,26 @@ public class Server implements IServer {
     }
 
     public String filter (String section, String subjectKey, String nameKey) {
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
         Gson gson = gsonBuilder.create();
+        List<Mail> result;
 
-        List<Mail> sub = searchBySubject(section,subjectKey);
-        List<Mail> name = searchBySenderName(section,nameKey);
-        List<Mail> result = combine(sub,name);
-
+        if (subjectKey==null&&nameKey==null){
+            return getData(section);
+        }
+        else if (nameKey==null){
+            result = searchBySubject(section,subjectKey.toLowerCase());
+        }
+        else if (subjectKey==null){
+            result = searchBySenderName(section,nameKey.toLowerCase());
+        }
+        else{
+            List<Mail> sub = searchBySubject(section,subjectKey.toLowerCase());
+            List<Mail> name = searchBySenderName(section,nameKey.toLowerCase());
+            result = combineFilter(sub,name);
+        }
         return gson.toJson(result);
     }
 
@@ -421,6 +433,17 @@ public class Server implements IServer {
         List<Mail> newList = list1;
         for (Mail mail : list2) {
             if (!newList.contains(mail)) {
+                newList.add(mail);
+            }
+        }
+
+        return newList;
+    }
+
+    public List<Mail> combineFilter(List<Mail> list1, List<Mail> list2) {
+        List<Mail> newList = new ArrayList<>();
+        for (Mail mail : list2) {
+            if (list1.contains(mail)) {
                 newList.add(mail);
             }
         }
