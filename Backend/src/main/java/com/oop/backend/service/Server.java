@@ -149,8 +149,7 @@ public class Server implements IServer {
             String password = validUser.getString("password");
             if (!password.equals(sentData.getString("password"))) return "Invalid Password.";
 
-            onlineUser = database.uploadUserData(validUser.getString("email"));
-            System.out.println(onlineUser.getPath());
+            onlineUser= database.uploadUserData(validUser.getString("email"));
             List<Mail> inbox = onlineUser.getInbox();
             return gson.toJson(inbox);
         }
@@ -209,40 +208,6 @@ public class Server implements IServer {
         return gson.toJson(result);
     }
 
-//    public String edit (String modify, String key, String replace) {
-//        String userEmail = getCurrentUser();
-//        String path = "./Users/".concat(userEmail);
-//        System.out.println(path);
-//        File Folder = new File(path);
-//        if (modify.equals("delete")){
-//            Folder.delete();
-//            setCurrentUser(null);
-//            return null;
-//            // Returns to the login page
-//        }
-//        else{
-//            System.out.println(path);
-//            try {
-//                ObjectMapper objectMapper = new ObjectMapper();
-//                Object user = objectMapper.readValue(new File(path.concat("/info.json")), new TypeReference<Object>() {});
-//
-//                GsonBuilder gsonBuilder = new GsonBuilder();
-//                gsonBuilder.setPrettyPrinting();
-//                Gson gson = gsonBuilder.create();
-//
-//                String jsonStr = gson.toJson(user);
-//                JSONObject userToEdit = new JSONObject(jsonStr);
-//
-//                userToEdit.put(key,replace);
-//                return userToEdit.toString();
-//            }
-//            catch (IOException e) {
-//                e.printStackTrace();
-//                return e.toString();
-//            }
-//        }
-//    }
-
     public void DeleteUser () {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
@@ -284,8 +249,8 @@ public class Server implements IServer {
             userToEdit.put(field,replace);
 //            User updatedUser = gson.fromJson(userToEdit.toString(), User.class);
 //            updatedUser.convertToJson();
-            onlineUser = database.uploadUserData(userToEdit.getString("email"));
             database.updateUserData(onlineUser.getPath().concat("/info.json"),userToEdit.toString());
+            onlineUser = database.uploadUserData(userToEdit.getString("email"));
 
             return userToEdit.toString();
             }
@@ -293,6 +258,69 @@ public class Server implements IServer {
                 e.printStackTrace();
                 return e.toString();
             }
+    }
+
+    public String createContact (String info) {
+
+        String path = onlineUser.getPath().concat("/Contacts");
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object contacts = objectMapper.readValue(new File(path.concat("/Contacts.json")), new TypeReference<Object>() {});
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.setPrettyPrinting();
+            Gson gson = gsonBuilder.create();
+
+            String jsonStr = gson.toJson(contacts);
+            JSONArray alreadyExist = new JSONArray(jsonStr);
+            JSONObject createdContact = new JSONObject(info);
+            alreadyExist.put(createdContact);
+
+            String[] email = onlineUser.getPath().split("/");
+            System.out.println(email[email.length-1]);
+            database.updateUserData(onlineUser.getPath().concat("/Contacts/Contacts.json"),alreadyExist.toString());
+            onlineUser = database.uploadUserData(email[email.length-1]);
+
+            return alreadyExist.toString();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+    }
+
+    public String deleteContact (long id) {
+
+        String path = onlineUser.getPath().concat("/Contacts");
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object contacts = objectMapper.readValue(new File(path.concat("/Contacts.json")), new TypeReference<Object>() {});
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.setPrettyPrinting();
+            Gson gson = gsonBuilder.create();
+
+            String jsonStr = gson.toJson(contacts);
+            JSONArray Exist = new JSONArray(jsonStr);
+
+            for (int i=0;i<Exist.length();i++) {
+                String temp = Exist.get(i).toString();
+                JSONObject contact = new JSONObject(temp);
+                if (contact.getLong("ID") == id) {
+                    System.out.println(contact.getString("firstName")+" "+contact.getString("lastName"));
+                    Exist.remove(i);
+                }
+            }
+            String[] email = onlineUser.getPath().split("/");
+            System.out.println(email[email.length-1]);
+            database.updateUserData(onlineUser.getPath().concat("/Contacts/Contacts.json"),Exist.toString());
+            onlineUser = database.uploadUserData(email[email.length-1]);
+            return Exist.toString();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
     }
     /*                                          SEARCH                                          */
     public String search(String folder, String key) { // To be sorted
