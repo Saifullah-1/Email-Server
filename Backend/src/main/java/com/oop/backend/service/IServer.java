@@ -7,7 +7,7 @@ public interface IServer {
 
     String filter (String section, String key, String value);
 
-    String edit (String modify, String key, String replace);
+    String editUser (String field, String replace);
 
     String search(String folder, String key);
 
@@ -15,6 +15,7 @@ public interface IServer {
 
     String getData (String section);
 
+    void DeleteUser();
     void sendEmail(String mail);
 
     void starMail(String folder, long id);
@@ -22,4 +23,6 @@ public interface IServer {
     void deleteMail(String folder, long id);
 
     void draftMail(String mail);
+
+
 }

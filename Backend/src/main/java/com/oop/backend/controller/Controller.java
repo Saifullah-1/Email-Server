@@ -81,11 +81,6 @@ public class Controller {
 //        return new ResponseEntity<>(server.favourite, HttpStatus.OK);
 //    }
 
-    @PostMapping ("/edit")
-    public ResponseEntity<String> edit(@RequestParam String modify, @RequestParam  (required = false) String key, @RequestParam  (required = false) String replace) {
-        return new ResponseEntity<>(server.edit(modify,key,replace), HttpStatus.OK);
-    }
-
     @GetMapping ("/filter")
     public ResponseEntity<String> filter(@RequestParam String section, @RequestParam (required = false) String key, @RequestParam (required = false) String value) {
         return new ResponseEntity<>(server.filter(section, key, value), HttpStatus.OK);
@@ -103,6 +98,22 @@ public class Controller {
         if (this.server.sort(folder, method) == null)
             return new ResponseEntity<>("[]", HttpStatus.OK);
         return new ResponseEntity<>(this.server.sort(folder, method), HttpStatus.OK);
+    }
+
+//    @GetMapping ("/delete")
+//    public ResponseEntity<String> delete(@RequestParam String user, @RequestParam  (required = false) String name) {
+//        return new ResponseEntity<>(server.Delete(user,name), HttpStatus.OK);
+//    }
+
+    @PostMapping ("/deleteUser")
+    public ResponseEntity<String> deleteUser() {
+        server.DeleteUser();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping ("/editUser")
+    public ResponseEntity<String> editUser(@RequestParam String field, @RequestParam  String replace) {
+        return new ResponseEntity<>(server.editUser(field,replace), HttpStatus.OK);
     }
 
 }
