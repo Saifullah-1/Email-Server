@@ -207,41 +207,91 @@ public class Server implements IServer {
         return gson.toJson(result);
     }
 
-    public String edit (String modify, String key, String replace) {
-        String userEmail = getCurrentUser();
-        String path = "./Users/".concat(userEmail);
-        System.out.println(path);
-        File Folder = new File(path);
-        if (modify.equals("delete")){
-            Folder.delete();
-            setCurrentUser(null);
-            return null;
-            // Returns to the login page
+//    public String edit (String modify, String key, String replace) {
+//        String userEmail = getCurrentUser();
+//        String path = "./Users/".concat(userEmail);
+//        System.out.println(path);
+//        File Folder = new File(path);
+//        if (modify.equals("delete")){
+//            Folder.delete();
+//            setCurrentUser(null);
+//            return null;
+//            // Returns to the login page
+//        }
+//        else{
+//            System.out.println(path);
+//            try {
+//                ObjectMapper objectMapper = new ObjectMapper();
+//                Object user = objectMapper.readValue(new File(path.concat("/info.json")), new TypeReference<Object>() {});
+//
+//                GsonBuilder gsonBuilder = new GsonBuilder();
+//                gsonBuilder.setPrettyPrinting();
+//                Gson gson = gsonBuilder.create();
+//
+//                String jsonStr = gson.toJson(user);
+//                JSONObject userToEdit = new JSONObject(jsonStr);
+//
+//                userToEdit.put(key,replace);
+//                return userToEdit.toString();
+//            }
+//            catch (IOException e) {
+//                e.printStackTrace();
+//                return e.toString();
+//            }
+//        }
+//    }
+
+    public void DeleteUser () {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
+
+        String path = onlineUser.getPath();
+        File userFolder = new File(path);
+        String[] toDelete = userFolder.list();
+
+        for (String folder : toDelete){
+            File del = new File(path.concat("/"+folder));
+            System.out.println(path.concat("/"+folder));
+            if (!folder.endsWith(".json")){
+            String[] jsonToDelte = del.list();
+                for (String json : jsonToDelte){
+                    File file = new File(path.concat("/"+folder+"/"+json));
+                    file.delete();
+                }
+            }
+            del.delete();
         }
-        else{
-            System.out.println(path);
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                Object user = objectMapper.readValue(new File(path.concat("/info.json")), new TypeReference<Object>() {});
+        userFolder.delete();
+        onlineUser=null;
+    }
 
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                gsonBuilder.setPrettyPrinting();
-                Gson gson = gsonBuilder.create();
+    public String editUser (String field, String replace) {
+        String path = onlineUser.getPath();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object user = objectMapper.readValue(new File(path.concat("/info.json")), new TypeReference<Object>() {});
 
-                String jsonStr = gson.toJson(user);
-                JSONObject userToEdit = new JSONObject(jsonStr);
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.setPrettyPrinting();
+            Gson gson = gsonBuilder.create();
 
-                userToEdit.put(key,replace);
-                return userToEdit.toString();
+            String jsonStr = gson.toJson(user);
+            JSONObject userToEdit = new JSONObject(jsonStr);
+
+            userToEdit.put(field,replace);
+//            User updatedUser = gson.fromJson(userToEdit.toString(), User.class);
+//            updatedUser.convertToJson();
+            onlineUser = database.uploadUserData(userToEdit.getString("email"));
+            database.updateUserData(onlineUser.getPath().concat("/info.json"),userToEdit.toString());
+
+            return userToEdit.toString();
             }
             catch (IOException e) {
                 e.printStackTrace();
                 return e.toString();
             }
-        }
     }
-
-
     /*                                          SEARCH                                          */
     public String search(String folder, String key) { // To be sorted
         GsonBuilder gsonBuilder = new GsonBuilder();

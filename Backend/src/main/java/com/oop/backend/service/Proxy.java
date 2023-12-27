@@ -22,10 +22,10 @@ public class Proxy implements IServer {
         return server.filter(section, key, value);
     }
 
-    @Override
-    public String edit(String modify, String key, String replace) {
-        return server.edit(modify, key, replace);
-    }
+//    @Override
+//    public String edit(String modify, String key, String replace) {
+//        return server.edit(modify, key, replace);
+//    }
 
     @Override
     public String search(String folder, String key) {
@@ -40,6 +40,16 @@ public class Proxy implements IServer {
     @Override
     public String getData(String section) {
         return server.getData(section);
+    }
+
+    @Override
+    public String editUser(String field, String replace) {
+        return server.editUser(field,replace);
+    }
+
+    @Override
+    public void DeleteUser() {
+        server.DeleteUser();
     }
 
     @Override
