@@ -33,11 +33,6 @@ public class Database {
     }
 
     public void updateUserData(String path, String data) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setPrettyPrinting();
-        Gson gson = gsonBuilder.create();
-
-
         try(FileWriter fileWriter = new FileWriter(path)) {
             fileWriter.write(data);
             fileWriter.flush();

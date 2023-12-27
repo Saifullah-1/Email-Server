@@ -17,7 +17,7 @@ public class Mail {
     private String body;
     private boolean favourite = false;
     private String state; // Inbox or Sent
-    private List<String> attachments = new ArrayList<>();
+    private List<Attachment> attachments = new ArrayList<>();
 
 //    public Date getDate() {
 //        return date;
@@ -89,12 +89,19 @@ public class Mail {
         this.state = state;
     }
 
-    public void addAttachment(String newAttach) {
-        this.attachments.add(newAttach);
+    public List<Attachment> getAttachments() {
+        return attachments;
     }
 
-    public List<String> getAttachments() {
-        return attachments;
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public void addAttachment(Attachment attachment) {
+        if (attachments == null)
+            attachments = new ArrayList<>();
+
+        this.attachments.add(attachment);
     }
 
     public long getID() {
@@ -123,12 +130,8 @@ public class Mail {
         receiverName.add(receiver);
     }
 
-    public void setAttachments(List<String> attachments) {
-        this.attachments = attachments;
-    }
-
     public JSONObject convertToJson() {
         Gson gson = new Gson();
-        return new JSONObject().put("ID", this.ID).put("from", this.from).put("to", gson.toJson(this.to)).put("Subject", this.subject).put("body", this.body).put("favourite", this.favourite).put("state", this.state);
+        return new JSONObject().put("ID", this.ID).put("from", this.from).put("to", gson.toJson(this.to)).put("Subject", this.subject).put("body", this.body).put("favourite", this.favourite).put("state", this.state).put("attachments", gson.toJson(attachments));
     }
 }

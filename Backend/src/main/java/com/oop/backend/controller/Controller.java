@@ -1,12 +1,16 @@
 package com.oop.backend.controller;
 
+import com.oop.backend.module.AttachmentConverter;
 import com.oop.backend.service.IServer;
 import com.oop.backend.service.Proxy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -32,8 +36,9 @@ public class Controller {
     }
 
     @PostMapping("/mailto")
-    public void sendEmail(@RequestBody String mail) {
-        server.sendEmail(mail);
+    public void sendEmail(@RequestBody String mail, @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
+        AttachmentConverter attachmentConverter = new AttachmentConverter(files);
+        server.sendEmail(mail, attachmentConverter.convertToJsonArray());
     }
 
     @PostMapping("/star")
@@ -42,8 +47,9 @@ public class Controller {
     }
 
     @PostMapping("/draft")
-    public void draftMsg(@RequestBody String mail) {
-        this.server.draftMail(mail);
+    public void draftMsg(@RequestBody String mail, @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
+        AttachmentConverter attachmentConverter = new AttachmentConverter(files);
+        this.server.draftMail(mail, attachmentConverter.convertToJsonArray());
     }
 
     @DeleteMapping("/delete")
@@ -75,11 +81,6 @@ public class Controller {
     public ResponseEntity<String> inbox() {
         return new ResponseEntity<>(server.getData("Inbox"), HttpStatus.OK);
     }
-
-    //    @GetMapping ("/favourite")
-//    public ResponseEntity<String> favourite() {
-//        return new ResponseEntity<>(server.favourite, HttpStatus.OK);
-//    }
 
     @GetMapping ("/filter")
     public ResponseEntity<String> filter(@RequestParam String section, @RequestParam (required = false) String key, @RequestParam (required = false) String value) {

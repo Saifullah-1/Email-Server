@@ -1,5 +1,6 @@
 package com.oop.backend.service;
 
+import org.json.JSONArray;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,8 +54,8 @@ public class Proxy implements IServer {
     }
 
     @Override
-    public void sendEmail(String mail) {
-        server.sendEmail(mail);
+    public void sendEmail(String mail, JSONArray attachments) {
+        server.sendEmail(mail, attachments);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class Proxy implements IServer {
     }
 
     @Override
-    public void draftMail(String mail) {
-        server.draftMail(mail);
+    public void draftMail(String mail, JSONArray attachments) {
+        server.draftMail(mail, attachments);
     }
 }

@@ -1,5 +1,7 @@
 package com.oop.backend.service;
 
+import org.json.JSONArray;
+
 public interface IServer {
     String signUp(String newUser);
 
@@ -16,13 +18,14 @@ public interface IServer {
     String getData (String section);
 
     void DeleteUser();
-    void sendEmail(String mail);
+
+    void sendEmail(String mail, JSONArray attachments);
 
     void starMail(String folder, long id);
 
     void deleteMail(String folder, long id);
 
-    void draftMail(String mail);
+    void draftMail(String mail, JSONArray attachments);
 
 
 }

@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import com.oop.backend.module.Contact;
 import com.oop.backend.module.Mail;
 import com.oop.backend.module.User;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -148,7 +149,8 @@ public class Server implements IServer {
             String password = validUser.getString("password");
             if (!password.equals(sentData.getString("password"))) return "Invalid Password.";
 
-            onlineUser= database.uploadUserData(validUser.getString("email"));
+            onlineUser = database.uploadUserData(validUser.getString("email"));
+            System.out.println(onlineUser.getPath());
             List<Mail> inbox = onlineUser.getInbox();
             return gson.toJson(inbox);
         }
@@ -601,9 +603,12 @@ public class Server implements IServer {
     }
 
     /*                                                       Mail Operations                                                       */
-    public void sendEmail(String mail) {
+    public void sendEmail(String mail, JSONArray attachments) {
         Gson gson = new Gson();
-        Mail send = gson.fromJson(mail, Mail.class);
+        JSONObject mailObj = new JSONObject(mail);
+        mailObj.put("attachments", attachments);
+        System.out.println(mailObj.toString());
+        Mail send = gson.fromJson(mailObj.toString(), Mail.class);
         send.setID(++mailID);
         send.setState("sent");
         String name = this.onlineUser.getFirstName().concat(" ").concat(this.onlineUser.getLastName());
@@ -619,6 +624,7 @@ public class Server implements IServer {
 
             User receiver = this.database.uploadUserData(to);
             String rec = receiver.getFirstName().concat(" ").concat(receiver.getLastName());
+            send.setReceiverName(new ArrayList<>());
             send.addReceiverName(rec);
 
             String recPath = path.concat("/Inbox/Inbox.json");
@@ -727,14 +733,16 @@ public class Server implements IServer {
 
         Gson gson = new Gson();
         this.database.updateUserData(path, gson.toJson(list));
+        this.database.updateUserData(this.onlineUser.getPath().concat("/Trash/Trash.json"), gson.toJson(this.onlineUser.getTrash()));
 
         System.out.println(gson.toJson(list));
     }
 
-    public void draftMail(String mail) {
+    public void draftMail(String mail, JSONArray attachments) {
         Gson gson = new Gson();
 
         JSONObject draftObject = new JSONObject(mail);
+        draftObject.put("attachments", attachments);
         Mail drafted = gson.fromJson(mail, Mail.class);
         drafted.setID(++mailID);
 

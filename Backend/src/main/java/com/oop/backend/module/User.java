@@ -11,7 +11,6 @@ public class User {
     private long ID;
     private String firstName;
     private String lastName;
-//    private Date birthDate;
     private String email;
     private String password;
     private List<Mail> inbox = new ArrayList<>();
@@ -112,16 +111,8 @@ public class User {
         this.lastName = lastName;
     }
 
-//    public Date getBirthDate() {
-//        return birthDate;
-//    }
-
-//    public void setBirthDate(Date birthDate) {
-//        this.birthDate = birthDate;
-//    }
-
     public JSONObject convertToJson() {
-        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("email", this.email).put("password", this.password).put("path",path);
+        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("email", this.email).put("password", this.password).put("path", this.path);
     }
 
     public void sendMail(Mail sent) {
