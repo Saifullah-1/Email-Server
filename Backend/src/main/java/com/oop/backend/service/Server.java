@@ -7,9 +7,7 @@ import com.google.gson.GsonBuilder;
 import com.oop.backend.module.Contact;
 import com.oop.backend.module.Mail;
 import com.oop.backend.module.User;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import static org.springframework.util.StringUtils.capitalize;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,9 +79,6 @@ public class Server implements IServer {
         Boolean created6 = contacts.mkdir();
         System.out.println(created6);
 
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setPrettyPrinting();
-        gson = gsonBuilder.create();
         System.out.println(path);
         database.updateUserData(path.concat("/info.json"), user.convertToJson().toString());
         database.addUser(user);
@@ -131,8 +126,8 @@ public class Server implements IServer {
     }
 
     public String login (String data) {
-        JSONObject dataObj = new JSONObject(data);
-        String path = "./Users/".concat(dataObj.getString("email"));
+        JSONObject sentData = new JSONObject(data);
+        String path = "./Users/".concat(sentData.getString("email"));
         System.out.println(path);
         File user = new File(path);
         if (!user.exists()){
@@ -149,111 +144,55 @@ public class Server implements IServer {
             String jsonStr = gson.toJson(info);
             System.out.println(jsonStr);
 
-            JSONObject jsonObject = new JSONObject(jsonStr);
-            String password = jsonObject.getString("password");
-            if (!password.equals(dataObj.getString("password"))) return "Invalid Password.";
+            JSONObject validUser = new JSONObject(jsonStr);
+            String password = validUser.getString("password");
+            if (!password.equals(sentData.getString("password"))) return "Invalid Password.";
 
-            setCurrentUser(jsonObject.getString("email"));
-
-            File inboxMessages = new File(path.concat("/Inbox"));
-            String[] messages = inboxMessages.list();
-            JSONArray inbox = new JSONArray();
-
-            for (String s : messages){
-                objectMapper = new ObjectMapper();
-                Object message = objectMapper.readValue(new File(path.concat("/Inbox/"+s)), new TypeReference<Object>() {});
-
-                gsonBuilder = new GsonBuilder();
-                gsonBuilder.setPrettyPrinting();
-                gson = gsonBuilder.create();
-
-                jsonStr = gson.toJson(message);
-                JSONObject recieved = new JSONObject(jsonStr);
-                inbox.put(recieved);
-            };
+            onlineUser= database.uploadUserData(validUser.getString("email"));
+            List<Mail> inbox = onlineUser.getInbox();
+            System.out.println(inbox.toString());
             return inbox.toString();
-
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
             return e.toString();
         }
     }
 
     public String getData (String section) {
-        String userEmail = getCurrentUser();
-        String path = "./Users/".concat(userEmail);
-        System.out.println(path);
 
-        try {
-            File Folder = new File(path.concat("/"+section));
-            String[] items = Folder.list();
-            JSONArray objects = new JSONArray();
+        String path = onlineUser.getPath();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
 
-            for (String s : items){
-                ObjectMapper objectMapper = new ObjectMapper();
-                Object message = objectMapper.readValue(new File(path.concat("/"+section+"/"+s)), new TypeReference<Object>() {});
-
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                gsonBuilder.setPrettyPrinting();
-                Gson gson = gsonBuilder.create();
-
-                String jsonStr = gson.toJson(message);
-                JSONObject recieved = new JSONObject(jsonStr);
-                objects.put(recieved);
-            };
-            return objects.toString();
-
-        } catch (IOException e) {
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object info = objectMapper.readValue(new File(path.concat("/info.json")), new TypeReference<Object>() {});
+            JSONObject jsonInfo = new JSONObject(info);
+            if (section.equalsIgnoreCase("inbox")) return onlineUser.getInbox().toString();
+            else if (section.equalsIgnoreCase("contacts")) return onlineUser.getContacts().toString();
+            else if (section.equalsIgnoreCase("draft")) return onlineUser.getDraft().toString();
+            else if (section.equalsIgnoreCase("sent")) return onlineUser.getSent().toString();
+            else if (section.equalsIgnoreCase("trash")) return onlineUser.getTrash().toString();
+            else return jsonInfo.toString();
+        }
+        catch (IOException e) {
             e.printStackTrace();
             return e.toString();
         }
     }
 
-    public String filter (String section, String key, String value) {
-        String userEmail = getCurrentUser();
-        section = section.toLowerCase();
-        section = capitalize(section);
-        key = key.toLowerCase();
-        value = value.toLowerCase();
-        String path = "./Users/".concat(userEmail+"/"+section);
-        System.out.println(path);
+    public String filter (String section, String subjectKey, String nameKey) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
 
-        try {
-            File Folder = new File(path);
-            String[] items = Folder.list();
-            JSONArray objects = new JSONArray();
+        List<Mail> sub = searchBySubject(section,subjectKey);
+        List<Mail> name = searchBySenderName(section,nameKey);
+        List<Mail> result = combine(sub,name);
 
-            for (String s : items){
-                ObjectMapper objectMapper = new ObjectMapper();
-                Object message = objectMapper.readValue(new File(path.concat("/"+s)), new TypeReference<Object>() {});
-
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                gsonBuilder.setPrettyPrinting();
-                Gson gson = gsonBuilder.create();
-
-                String jsonStr = gson.toJson(message);
-                JSONObject mail = new JSONObject(jsonStr);
-
-                if (key.equals("subject")){
-                    String check = mail.getString(key).toLowerCase();
-                    System.out.println("File : "+path.concat("/"+s)+",, The Subject = "+check+" ,,, The Value = "+value);
-                    if (check.contains(value)){
-                        objects.put(mail);
-                    }
-                }
-                else if (key.equals("sender")){
-                    String check = mail.getString("senderName").toLowerCase();
-                    if (check.contains(value)){
-                        objects.put(mail);
-                    }
-                }
-            }
-            return objects.toString();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return e.toString();
-        }
+        return gson.toJson(result);
     }
 
     public String edit (String modify, String key, String replace) {
