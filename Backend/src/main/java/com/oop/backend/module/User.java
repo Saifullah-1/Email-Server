@@ -22,11 +22,10 @@ public class User {
 
     public User() {}
 
-    public User(long ID, String firstName, String lastName, Date birthDate, String password, String path) {
+    public User(long ID, String firstName, String lastName, String password, String path) {
         this.ID = ID;
         this.firstName = firstName;
         this.lastName = lastName;
-//        this.birthDate = birthDate;
         this.password = password;
         this.path = path;
     }

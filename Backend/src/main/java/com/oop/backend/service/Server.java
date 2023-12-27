@@ -308,6 +308,7 @@ public class Server implements IServer {
         allFound = combine(allFound, searchByBody(folder, key.toLowerCase()));
         allFound = combine(allFound, searchBySenderName(folder, key.toLowerCase()));
         allFound = combine(allFound, searchByReceiverName(folder, key.toLowerCase()));
+        allFound = combine(allFound, searchByAttachment(folder, key));
 //        allFound = combine(allFound, searchBySenderEmail(folder, key.toLowerCase()));
 //        allFound = combine(allFound, searchByReceiverEmail(folder, key.toLowerCase()));
 
@@ -459,27 +460,27 @@ public class Server implements IServer {
         return found;
     }
 
-//    public List<Mail> searchByAttachment(String folder, String key) {
-//        List<Mail> folderMails = null;
-//        List<Mail> found = new ArrayList<>();
-//        if (folder.equalsIgnoreCase("inbox"))
-//            folderMails = this.onlineUser.getInbox();
-//        else if (folder.equalsIgnoreCase("draft"))
-//            folderMails = this.onlineUser.getDraft();
-//        else if (folder.equalsIgnoreCase("sent"))
-//            folderMails = this.onlineUser.getSent();
-//        else if (folder.equalsIgnoreCase("trash"))
-//            folderMails = this.onlineUser.getTrash();
-//
-//        for (Mail mail : folderMails) {
-//            String receiver = mail.getReceiverName().toLowerCase();
-//            if (receiver.contains(key)) {
-//                found.add(mail);
-//            }
-//        }
-//
-//        return found;
-//    }
+    public List<Mail> searchByAttachment(String folder, String key) {
+        List<Mail> folderMails = null;
+        List<Mail> found = new ArrayList<>();
+        if (folder.equalsIgnoreCase("inbox"))
+            folderMails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            folderMails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            folderMails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            folderMails = this.onlineUser.getTrash();
+
+        for (Mail mail : folderMails) {
+            String receiver = mail.getFirstAttachmentFileName().toLowerCase();
+            if (receiver.contains(key)) {
+                found.add(mail);
+            }
+        }
+
+        return found;
+    }
 
     public List<Mail> combine(List<Mail> list1, List<Mail> list2) {
         List<Mail> newList = list1;
@@ -586,6 +587,23 @@ public class Server implements IServer {
         return emails;
     }
 
+    public List<Mail> sortByAttachment(String folder) {
+        List<Mail> emails = null;
+        if (folder.equalsIgnoreCase("inbox"))
+            emails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            emails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            emails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            emails = this.onlineUser.getTrash();
+
+
+        emails.sort(Comparator.comparing(Mail::getFirstAttachmentFileName));
+
+        return emails;
+    }
+
     public List<Mail> sortBySubject(String folder) {
         List<Mail> emails = null;
         if (folder.equalsIgnoreCase("inbox"))
@@ -637,22 +655,6 @@ public class Server implements IServer {
         String sentPath = "./Users/".concat(send.getFrom()).concat("/Sent/Sent.json");
 
         this.database.updateUserData(sentPath, gson.toJson(this.onlineUser.getSent()));
-
-        //        try {
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            Object info = objectMapper.readValue(new File(path.concat("/info.json")), new TypeReference<Object>() {});
-//
-//            GsonBuilder gsonBuilder = new GsonBuilder();
-//            gsonBuilder.setPrettyPrinting();
-//            gson = gsonBuilder.create();
-//
-//            String jsonStr = gson.toJson(info);
-//            JSONObject jsonObject = new JSONObject(jsonStr);
-//            String rec = jsonObject.getString("firstName").concat(" ").concat(jsonObject.getString("lastName"));
-//            send.setReceiverName(rec);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public void starMail(String folder, long id) {

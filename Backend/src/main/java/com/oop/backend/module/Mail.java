@@ -130,6 +130,10 @@ public class Mail {
         receiverName.add(receiver);
     }
 
+    public String getFirstAttachmentFileName() {
+        return this.attachments.get(0).getFileName();
+    }
+
     public JSONObject convertToJson() {
         Gson gson = new Gson();
         return new JSONObject().put("ID", this.ID).put("from", this.from).put("to", gson.toJson(this.to)).put("Subject", this.subject).put("body", this.body).put("favourite", this.favourite).put("state", this.state).put("attachments", gson.toJson(attachments));
