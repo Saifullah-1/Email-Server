@@ -627,6 +627,7 @@ public class Server implements IServer {
         Gson gson = new Gson();
         JSONObject mailObj = new JSONObject(mail);
         mailObj.put("attachments", attachments);
+        mailObj.put("from", onlineUser.getEmail());
         System.out.println(mailObj.toString());
         Mail send = gson.fromJson(mailObj.toString(), Mail.class);
         send.setID(++mailID);
