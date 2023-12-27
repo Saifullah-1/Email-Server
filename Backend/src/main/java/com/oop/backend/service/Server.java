@@ -521,6 +521,8 @@ public class Server implements IServer {
             sorted = sortByImportance(folder);
         else if (method.equalsIgnoreCase("subject"))
             sorted = sortBySubject(folder);
+        else if (method.equalsIgnoreCase("attachment"))
+            sorted = sortByAttachment(folder);
         return gson.toJson(sorted);
     }
 
