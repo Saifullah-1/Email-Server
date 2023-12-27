@@ -121,7 +121,7 @@ public class User {
 //    }
 
     public JSONObject convertToJson() {
-        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("email", this.email).put("password", this.password);
+        return (new JSONObject()).put("ID", this.ID).put("firstName", this.firstName).put("lastName", this.lastName).put("email", this.email).put("password", this.password).put("path",path);
     }
 
     public void sendMail(Mail sent) {

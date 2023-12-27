@@ -1,0 +1,27 @@
+[
+  {
+    "ID":0,
+    "from":"muhammad@yahoo.com",
+    "to":"ahmed@gmail.com",
+    "senderName" : "Saifullah Mosuad",
+    "receiverName" : "Ahmed Ashraf",
+    "subject":"Tour to Kosovo and Cairo",
+    "body":"a Tour to Cairo (Cairo Sucks)",
+    "favourite":true,
+    "state":"inbox",
+    "attachments":""
+  },
+  {
+    "ID":1,
+    "from":"mahmoud41@yahoo.com",
+    "to":"ahmed@gmail.com",
+    "senderName" : "Mahmoud Osama",
+    "receiverName" : "Ahmed Ashraf",
+    "subject":"Engineering",
+    "body":"Congratulations on entering engineering",
+    "favourite":false,
+    "state":"inbox",
+    "attachments":""
+  }
+]
+
