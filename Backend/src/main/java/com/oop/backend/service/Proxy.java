@@ -49,10 +49,18 @@ public class Proxy implements IServer {
     }
 
     @Override
+    public String createContact(String info) {
+        return server.createContact(info);
+    }
+
+    @Override
+    public String deleteContact(long id) {
+        return server.deleteContact(id);
+    }
+    @Override
     public void DeleteUser() {
         server.DeleteUser();
     }
-
     @Override
     public void sendEmail(String mail, JSONArray attachments) {
         server.sendEmail(mail, attachments);
