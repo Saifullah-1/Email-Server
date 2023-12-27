@@ -308,7 +308,7 @@ public class Server implements IServer {
         allFound = combine(allFound, searchByBody(folder, key.toLowerCase()));
         allFound = combine(allFound, searchBySenderName(folder, key.toLowerCase()));
         allFound = combine(allFound, searchByReceiverName(folder, key.toLowerCase()));
-        allFound = combine(allFound, searchByAttachment(folder, key));
+        allFound = combine(allFound, searchByAttachment(folder, key.toLowerCase()));
 //        allFound = combine(allFound, searchBySenderEmail(folder, key.toLowerCase()));
 //        allFound = combine(allFound, searchByReceiverEmail(folder, key.toLowerCase()));
 
