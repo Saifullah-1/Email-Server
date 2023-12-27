@@ -46,7 +46,7 @@ public class Controller {
         this.server.draftMail(mail);
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete")
     public void deleteMsg(@RequestParam String folder, @RequestParam long id) {
         this.server.deleteMail(folder, id);
     }

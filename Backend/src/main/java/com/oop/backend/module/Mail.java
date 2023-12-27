@@ -10,7 +10,7 @@ public class Mail {
     private long ID;
 //    private Date date;
     private String senderName;
-    private String receiverName;
+    private List<String> receiverName = new ArrayList<>();
     private String from;
     private List<String> to = new ArrayList<>();
     private String subject;
@@ -33,10 +33,6 @@ public class Mail {
 
     public void setSenderName(String senderName) {
         this.senderName = senderName;
-    }
-
-    public void setFavourite(boolean favourite) {
-        this.favourite = favourite;
     }
 
     public String getFrom() {
@@ -109,12 +105,22 @@ public class Mail {
         this.ID = ID;
     }
 
-    public String getReceiverName() {
+    public List<String> getReceiverName() {
         return receiverName;
     }
 
-    public void setReceiverName(String receiverName) {
+    public String getFirstReceiverName() {
+        return receiverName.get(0);
+    }
+
+    public void setReceiverName(List<String> receiverName) {
         this.receiverName = receiverName;
+    }
+
+    public void addReceiverName(String receiver) {
+        if (receiverName == null)
+            receiverName = new ArrayList<>();
+        receiverName.add(receiver);
     }
 
     public void setAttachments(List<String> attachments) {

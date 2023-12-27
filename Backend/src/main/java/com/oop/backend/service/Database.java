@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.oop.backend.module.User;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -91,17 +92,17 @@ public class Database {
                 ObjectMapper objectMapper = new ObjectMapper();
                 List<Object> mails = objectMapper.readValue(new File(path.concat(s)), new TypeReference<List<Object>>() {});
 
-                String jsonStr = gson.toJson(mails);
+                JSONArray jsonArr = new JSONArray(mails);
                 if (s.endsWith("Inbox.json"))
-                    userObject.put("inbox", jsonStr);
+                    userObject.put("inbox", jsonArr);
                 else if (s.endsWith("Sent.json"))
-                    userObject.put("sent", jsonStr);
+                    userObject.put("sent", jsonArr);
                 else if (s.endsWith("Draft.json"))
-                    userObject.put("draft", jsonStr);
+                    userObject.put("draft", jsonArr);
                 else if (s.endsWith("Trash.json"))
-                    userObject.put("trash", jsonStr);
+                    userObject.put("trash", jsonArr);
                 else if (s.endsWith("Contacts.json"))
-                    userObject.put("contacts", jsonStr);
+                    userObject.put("contacts", jsonArr);
 
                 System.out.println(userObject.toString());
             } catch (IOException e) {
@@ -109,7 +110,6 @@ public class Database {
             }
         }
 
-        System.out.println(userObject.toString());
         return gson.fromJson(userObject.toString(), User.class);
     }
 }
