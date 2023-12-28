@@ -57,27 +57,27 @@ public class Controller {
         this.server.deleteMail(folder, id);
     }
 
-    @PostMapping ("/contactsF")
+    @GetMapping ("/contactsF")
     public ResponseEntity<String> contacts() {
         return new ResponseEntity<>(server.getData("Contacts"), HttpStatus.OK);
     }
 
-    @PostMapping ("/draftF")
+    @GetMapping ("/draftF")
     public ResponseEntity<String> draft() {
         return new ResponseEntity<>(server.getData("Draft"), HttpStatus.OK);
     }
 
-    @PostMapping ("/sentF")
+    @GetMapping ("/sentF")
     public ResponseEntity<String> sent() {
         return new ResponseEntity<>(server.getData("Sent"), HttpStatus.OK);
     }
 
-    @PostMapping ("/trashF")
+    @GetMapping ("/trashF")
     public ResponseEntity<String> trash() {
         return new ResponseEntity<>(server.getData("Trash"), HttpStatus.OK);
     }
 
-    @PostMapping ("/inboxF")
+    @GetMapping ("/inboxF")
     public ResponseEntity<String> inbox() {
         return new ResponseEntity<>(server.getData("Inbox"), HttpStatus.OK);
     }
@@ -106,7 +106,7 @@ public class Controller {
 //        return new ResponseEntity<>(server.Delete(user,name), HttpStatus.OK);
 //    }
 
-    @PostMapping ("/deleteUser")
+    @DeleteMapping ("/deleteUser")
     public ResponseEntity<String> deleteUser() {
         server.DeleteUser();
         return new ResponseEntity<>(HttpStatus.OK);
