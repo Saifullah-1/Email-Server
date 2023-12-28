@@ -57,27 +57,27 @@ public class Controller {
         this.server.deleteMail(folder, id);
     }
 
-    @GetMapping ("/contactsF")
+    @PostMapping ("/contactsF")
     public ResponseEntity<String> contacts() {
         return new ResponseEntity<>(server.getData("Contacts"), HttpStatus.OK);
     }
 
-    @GetMapping ("/draftF")
+    @PostMapping ("/draftF")
     public ResponseEntity<String> draft() {
         return new ResponseEntity<>(server.getData("Draft"), HttpStatus.OK);
     }
 
-    @GetMapping ("/sentF")
+    @PostMapping ("/sentF")
     public ResponseEntity<String> sent() {
         return new ResponseEntity<>(server.getData("Sent"), HttpStatus.OK);
     }
 
-    @GetMapping ("/trashF")
+    @PostMapping ("/trashF")
     public ResponseEntity<String> trash() {
         return new ResponseEntity<>(server.getData("Trash"), HttpStatus.OK);
     }
 
-    @GetMapping ("/inboxF")
+    @PostMapping ("/inboxF")
     public ResponseEntity<String> inbox() {
         return new ResponseEntity<>(server.getData("Inbox"), HttpStatus.OK);
     }
@@ -115,16 +115,6 @@ public class Controller {
     @PostMapping ("/editUser")
     public ResponseEntity<String> editUser(@RequestParam String field, @RequestParam  String replace) {
         return new ResponseEntity<>(server.editUser(field,replace), HttpStatus.OK);
-    }
-
-    @PostMapping ("/createContact")
-    public ResponseEntity<String> createContact(@RequestBody String info) {
-        return new ResponseEntity<>(server.createContact(info), HttpStatus.OK);
-    }
-
-    @PostMapping ("/deleteContact")
-    public ResponseEntity<String> deleteContact(@RequestParam long id) {
-        return new ResponseEntity<>(server.deleteContact(id), HttpStatus.OK);
     }
 
 }
