@@ -27,9 +27,10 @@ public interface IServer {
 
     void starMail(String folder, long id);
 
-    void deleteMail(String folder, long id);
+    String deleteMail(String folder, long id);
 
     void draftMail(String mail, JSONArray attachments);
 
 
+    void unstarMail(String folder, long id);
 }

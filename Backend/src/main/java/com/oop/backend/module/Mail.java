@@ -130,7 +130,13 @@ public class Mail {
         receiverName.add(receiver);
     }
 
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
+
     public String getFirstAttachmentFileName() {
+        if (this.attachments.get(0).getFileName() == null)
+            return "";
         return this.attachments.get(0).getFileName();
     }
 

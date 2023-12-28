@@ -46,6 +46,11 @@ public class Controller {
         this.server.starMail(folder, id);
     }
 
+    @PostMapping("/unstar")
+    public void unstarMsg(@RequestParam String folder, @RequestParam long id) {
+        this.server.unstarMail(folder, id);
+    }
+
     @PostMapping("/draft")
     public void draftMsg(@RequestBody String mail, @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
         AttachmentConverter attachmentConverter = new AttachmentConverter(files);
@@ -87,7 +92,7 @@ public class Controller {
         return new ResponseEntity<>(server.filter(section, key, value), HttpStatus.OK);
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<String> search(@RequestParam String folder, @RequestBody String key) {
         if (this.server.search(folder, key) == null)
             return new ResponseEntity<>("[]", HttpStatus.OK);
@@ -112,7 +117,7 @@ public class Controller {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping ("/editUser")
+    @GetMapping ("/editUser")
     public ResponseEntity<String> editUser(@RequestParam String field, @RequestParam  String replace) {
         return new ResponseEntity<>(server.editUser(field,replace), HttpStatus.OK);
     }

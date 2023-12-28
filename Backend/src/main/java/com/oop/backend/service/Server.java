@@ -261,32 +261,21 @@ public class Server implements IServer {
     }
 
     public String createContact (String info) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
 
-        String path = onlineUser.getPath().concat("/Contacts");
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Object contacts = objectMapper.readValue(new File(path.concat("/Contacts.json")), new TypeReference<Object>() {});
+        String jsonStr = gson.toJson(onlineUser.getContacts());
+        JSONArray alreadyExist = new JSONArray(jsonStr);
+        JSONObject createdContact = new JSONObject(info);
+        alreadyExist.put(createdContact);
 
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.setPrettyPrinting();
-            Gson gson = gsonBuilder.create();
+        String[] email = onlineUser.getPath().split("/");
+        System.out.println(email[email.length-1]);
+        database.updateUserData(onlineUser.getPath().concat("/Contacts/Contacts.json"),alreadyExist.toString());
+        onlineUser = database.uploadUserData(email[email.length-1]);
 
-            String jsonStr = gson.toJson(contacts);
-            JSONArray alreadyExist = new JSONArray(jsonStr);
-            JSONObject createdContact = new JSONObject(info);
-            alreadyExist.put(createdContact);
-
-            String[] email = onlineUser.getPath().split("/");
-            System.out.println(email[email.length-1]);
-            database.updateUserData(onlineUser.getPath().concat("/Contacts/Contacts.json"),alreadyExist.toString());
-            onlineUser = database.uploadUserData(email[email.length-1]);
-
-            return alreadyExist.toString();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            return e.toString();
-        }
+        return alreadyExist.toString();
     }
 
     public String deleteContact (long id) {
@@ -339,6 +328,7 @@ public class Server implements IServer {
         allFound = combine(allFound, searchByAttachment(folder, key.toLowerCase()));
 //        allFound = combine(allFound, searchBySenderEmail(folder, key.toLowerCase()));
 //        allFound = combine(allFound, searchByReceiverEmail(folder, key.toLowerCase()));
+        allFound.sort(Comparator.comparing(Mail::getID));
 
         return gson.toJson(allFound);
     }
@@ -501,8 +491,10 @@ public class Server implements IServer {
             folderMails = this.onlineUser.getTrash();
 
         for (Mail mail : folderMails) {
-            String receiver = mail.getFirstAttachmentFileName().toLowerCase();
-            if (receiver.contains(key)) {
+            String attach = mail.getFirstAttachmentFileName().toLowerCase();
+            if (attach.isEmpty())
+                continue;
+            if (attach.contains(key)) {
                 found.add(mail);
             }
         }
@@ -543,8 +535,8 @@ public class Server implements IServer {
             sorted = sortBySenderName(folder);
         else if (method.equalsIgnoreCase("receiver"))
             sorted = sortByReceiverName(folder);
-//        else if (method.equalsIgnoreCase("date"))
-//            sorted = sortByDate(folder);
+        else if (method.equalsIgnoreCase("date"))
+            sorted = sortByDate(folder);
         else if (method.equalsIgnoreCase("importance"))
             sorted = sortByImportance(folder);
         else if (method.equalsIgnoreCase("subject"))
@@ -554,21 +546,23 @@ public class Server implements IServer {
         return gson.toJson(sorted);
     }
 
-//    public List<Mail> sortByDate(String folder) {
-//        List<Mail> emails = null;
-//        if (folder.equalsIgnoreCase("inbox"))
-//            emails = this.onlineUser.getInbox();
-//        else if (folder.equalsIgnoreCase("draft"))
-//            emails = this.onlineUser.getDraft();
-//        else if (folder.equalsIgnoreCase("sent"))
-//            emails = this.onlineUser.getSent();
-//        else if (folder.equalsIgnoreCase("trash"))
-//            emails = this.onlineUser.getTrash();
-//
-//        emails.sort(Comparator.comparing(Mail::getDate));
-//
-//        return emails;
-//    }
+
+
+    public List<Mail> sortByDate(String folder) {
+        List<Mail> emails = null;
+        if (folder.equalsIgnoreCase("inbox"))
+            emails = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            emails = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            emails = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            emails = this.onlineUser.getTrash();
+
+        emails.sort(Comparator.comparing(Mail::getID));
+
+        return emails;
+    }
 
     public List<Mail> sortBySenderName(String folder) {
         List<Mail> emails = null;
@@ -730,7 +724,49 @@ public class Server implements IServer {
         System.out.println(gson.toJson(list));
     }
 
-    public void deleteMail(String folder, long id) {
+    public void unstarMail(String folder, long id) {
+        List<Mail> list = null;
+        if (folder.equalsIgnoreCase("inbox"))
+            list = this.onlineUser.getInbox();
+        else if (folder.equalsIgnoreCase("draft"))
+            list = this.onlineUser.getDraft();
+        else if (folder.equalsIgnoreCase("sent"))
+            list = this.onlineUser.getSent();
+        else if (folder.equalsIgnoreCase("trash"))
+            list = this.onlineUser.getTrash();
+        for (Mail mail : list) {
+            System.out.println(mail.getID());
+            if (mail.getID() == id) {
+                list.remove(mail);
+                mail.setFavourite(false);
+                list.add(mail);
+                break;
+            }
+        }
+
+        String path = this.onlineUser.getPath();
+        if (folder.equalsIgnoreCase("inbox")) {
+            this.onlineUser.setInbox(new ArrayList<>(list));
+            path = path.concat("/Inbox/Inbox.json");
+        } else if (folder.equalsIgnoreCase("draft")) {
+            this.onlineUser.setDraft(new ArrayList<>(list));
+            path = path.concat("/Draft/Draft.json");
+        } else if (folder.equalsIgnoreCase("sent")) {
+            this.onlineUser.setSent(new ArrayList<>(list));
+            path = path.concat("/Sent/Sent.json");
+        } else if (folder.equalsIgnoreCase("trash")) {
+            this.onlineUser.setTrash(new ArrayList<>(list));
+            path = path.concat("/Trash/Trash.json");
+        }
+
+        Gson gson = new Gson();
+        System.out.println(path);
+        this.database.updateUserData(path, gson.toJson(list));
+
+        System.out.println(gson.toJson(list));
+    }
+
+    public String deleteMail(String folder, long id) {
         List<Mail> list = null;
         if (folder.equalsIgnoreCase("inbox"))
             list = this.onlineUser.getInbox();
@@ -769,6 +805,8 @@ public class Server implements IServer {
         this.database.updateUserData(this.onlineUser.getPath().concat("/Trash/Trash.json"), gson.toJson(this.onlineUser.getTrash()));
 
         System.out.println(gson.toJson(list));
+
+        return gson.toJson(list);
     }
 
     public void draftMail(String mail, JSONArray attachments) {
