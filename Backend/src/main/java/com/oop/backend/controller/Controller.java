@@ -117,4 +117,13 @@ public class Controller {
         return new ResponseEntity<>(server.editUser(field,replace), HttpStatus.OK);
     }
 
+    @PostMapping ("/createContact")
+    public ResponseEntity<String> createContact(@RequestBody String info) {
+        return new ResponseEntity<>(server.createContact(info), HttpStatus.OK);
+    }
+
+    @DeleteMapping ("/deleteContact")
+    public ResponseEntity<String> deleteContact(@RequestParam long id) {
+        return new ResponseEntity<>(server.deleteContact(id), HttpStatus.OK);
+    }
 }
