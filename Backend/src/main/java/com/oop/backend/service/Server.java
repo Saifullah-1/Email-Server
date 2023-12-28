@@ -275,7 +275,7 @@ public class Server implements IServer {
         database.updateUserData(onlineUser.getPath().concat("/Contacts/Contacts.json"),alreadyExist.toString());
         onlineUser = database.uploadUserData(email[email.length-1]);
 
-        return alreadyExist.toString();
+        return createdContact.toString();
     }
 
     public String deleteContact (long id) {
