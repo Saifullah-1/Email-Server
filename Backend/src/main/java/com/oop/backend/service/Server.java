@@ -275,7 +275,7 @@ public class Server implements IServer {
         database.updateUserData(onlineUser.getPath().concat("/Contacts/Contacts.json"),alreadyExist.toString());
         onlineUser = database.uploadUserData(email[email.length-1]);
 
-        return createdContact.toString();
+        return alreadyExist.toString();
     }
 
     public String deleteContact (long id) {
@@ -354,49 +354,6 @@ public class Server implements IServer {
         return found;
     }
 
-//    public List<Mail> searchBySenderEmail(String folder, String key) {
-//        List<Mail> folderMails = null;
-//        List<Mail> found = new ArrayList<>();
-//        if (folder.equalsIgnoreCase("inbox"))
-//            folderMails = this.onlineUser.getInbox();
-//        else if (folder.equalsIgnoreCase("draft"))
-//            folderMails = this.onlineUser.getDraft();
-//        else if (folder.equalsIgnoreCase("sent"))
-//            folderMails = this.onlineUser.getSent();
-//        else if (folder.equalsIgnoreCase("trash"))
-//            folderMails = this.onlineUser.getTrash();
-//
-//        for (Mail mail : folderMails) {
-//            String sender = mail.getFrom().toLowerCase();
-//            if (sender.contains(key)) {
-//                found.add(mail);
-//            }
-//        }
-//        return found;
-//    }
-//
-//    public List<Mail> searchByReceiverEmail(String folder, String key) {
-//        List<Mail> folderMails = null;
-//        List<Mail> found = new ArrayList<>();
-//        if (folder.equalsIgnoreCase("inbox"))
-//            folderMails = this.onlineUser.getInbox();
-//        else if (folder.equalsIgnoreCase("draft"))
-//            folderMails = this.onlineUser.getDraft();
-//        else if (folder.equalsIgnoreCase("sent"))
-//            folderMails = this.onlineUser.getSent();
-//        else if (folder.equalsIgnoreCase("trash"))
-//            folderMails = this.onlineUser.getTrash();
-//
-//        for (Mail mail : folderMails) {
-//            for (String sender : mail.getTo()) {
-//                sender = sender.toLowerCase();
-//                if (sender.contains(key)) {
-//                    found.add(mail);
-//                }
-//            }
-//        }
-//        return found;
-//    }
 
     public List<Mail> searchBySubject(String folder, String key) {
         List<Mail> folderMails = null;

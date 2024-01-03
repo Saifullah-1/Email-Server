@@ -3,12 +3,10 @@ package com.oop.backend.module;
 import com.google.gson.Gson;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Mail {
     private long ID;
-//    private Date date;
     private String senderName;
     private List<String> receiverName = new ArrayList<>();
     private String from;
@@ -18,14 +16,6 @@ public class Mail {
     private boolean favourite = false;
     private String state; // Inbox or Sent
     private List<Attachment> attachments = new ArrayList<>();
-
-//    public Date getDate() {
-//        return date;
-//    }
-
-//    public void setDate(Date date) {
-//        this.date = date;
-//    }
 
     public String getSenderName() {
         return senderName;

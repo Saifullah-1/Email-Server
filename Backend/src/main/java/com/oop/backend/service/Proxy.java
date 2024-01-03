@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 public class Proxy implements IServer {
     private IServer server = new Server();
 
-
     @Override
     public String signUp(String newUser) {
         return server.signUp(newUser);
