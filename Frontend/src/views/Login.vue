@@ -23,7 +23,7 @@
                 return{
                   email: '',
                   password: '',
-                  url: '',
+                  url: 'http://localhost:8080/mail',
                 }
             }
             ,methods:{
@@ -44,9 +44,10 @@
                     email: this.email,
                     password: this.password,
                   }
-                  /*await fetch(url+'/login',
+                await fetch(this.url+'/login',{
                   method: 'POST'
-                  body: JSON.stringify(user)
+                  ,body: JSON.stringify(user)
+                }
                 )
                 .then(response=> {
                     if (!response.ok) {
@@ -55,12 +56,20 @@
                     return response.text(); 
                 })
                 .then(data=>{
-                    
+                    if(data === "There is no Such an Email."){
+                        alert(data) 
+                    }
+                    else if(data ==="Invalid Password."){
+                      alert(data)
+                    }
+                    else{
+                       
+                       const inbox = JSON.parse(data)
+                       router.push({name:'Home'})
+                       setTimeout(()=>{this.emitter.emit("log-in",{msg2: user.email})},0)
+                    }
                 })
-                .catch(error =>{
-                  console.error('Error:', error);
-                })*/
-                  router.push({name:'Home'})
+                
                 }
               }               
             }
@@ -109,7 +118,7 @@
     }
     .log .form input.button{
       color: #fff;
-      background: #009579;
+      background: #1f95c8;
       font-size: 1.2rem;
       font-weight: 500;
       letter-spacing: 1px;
@@ -117,14 +126,14 @@
       transition: 0.4s;
     }
     .log .form input.button:hover{
-      background: #006653;
+      background: #045787;
     }
     .signup{
       font-size: 17px;
       text-align: center;
     }
     .signup label{
-      color: #009579;
+      color: #1f95c8;
       cursor: pointer;
     }
     .signup label:hover{

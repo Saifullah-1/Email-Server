@@ -5,9 +5,6 @@
       <form action="#">
         <input type="text" placeholder="First Name" v-model ="FirstName">
         <input type="text" placeholder="Last Name" v-model ="LastName">
-
-        <label for="birthday" style="font-size: 17px; margin-left: 10px;">Date of birth:</label>
-        <input type="date" id="birthday" v-model = "birthday">
         <input type="text" placeholder="Enter your email" v-model ="email">
         <input type="password" placeholder="Create a password" v-model ="password">
         <input type="button" class="button" value="Signup" @click="signUp">
@@ -30,15 +27,14 @@ import router from '@/router'
             return{
                 FirstName: '',
                 LastName: '',
-                birthday: '',
                 email: '',
                 password: '',
-                url: '',
+                url: 'http://localhost:8080/mail',
             }
         }
         ,methods:{
             handleInput(){
-              if(this.FirstName === '' ||this.LastName === '' ||this.birthday === '' ||this.email === '' ||this.password === ''){
+              if(this.FirstName === '' ||this.LastName === '' ||this.email === '' ||this.password === ''){
                 alert("Please Fill All The Fields")
                 return false
               }
@@ -53,13 +49,13 @@ import router from '@/router'
                 var user = {
                   firstName: this.FirstName,
                   lastName: this.LastName,
-                  birthDate: this.birthday,
                   email: this.email,
                   password: this.password,
                 }
-                /*await fetch(url+'/signup',
-                  method: 'POST'
-                  body: JSON.stringify(user)
+                await fetch(this.url+'/signup',{
+                   method: 'POST'
+                   , body: JSON.stringify(user)
+                  }
                 )
                 .then(response=> {
                     if (!response.ok) {
@@ -68,12 +64,21 @@ import router from '@/router'
                     return response.text(); 
                 })
                 .then(data=>{
-                    
+                    if(data === "Email already exists."){
+                        alert(data)
+                    }
+                    else if(data === "Enter a valid email."){
+                        alert(data)
+                    }
+                    else{
+                        const info = JSON.parse(data)
+                        router.push({name:'Home'})
+                        setTimeout(()=>{this.emitter.emit("sign-up", { msg: user})},0)
+                    }
                 })
                 .catch(error =>{
                   console.error('Error:', error);
-                })*/
-                router.push({name: 'Home'})
+                })
               }
           } 
         }
@@ -129,7 +134,7 @@ import router from '@/router'
 }
 .signlog .form input.button{
   color: #fff;
-  background: #009579;
+  background: #1f95c8;
   font-size: 1.2rem;
   font-weight: 500;
   letter-spacing: 1px;
@@ -137,14 +142,14 @@ import router from '@/router'
   transition: 0.4s;
 }
 .signlog .form input.button:hover{
-  background: #006653;
+  background: #045787;
 }
 .signup{
   font-size: 17px;
   text-align: center;
 }
 .signup label{
-  color: #009579;
+  color: #1f95c8;
   cursor: pointer;
 }
 .signup label:hover{
